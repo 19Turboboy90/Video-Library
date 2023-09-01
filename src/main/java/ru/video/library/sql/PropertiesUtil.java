@@ -3,7 +3,7 @@ package main.java.ru.video.library.sql;
 import java.io.IOException;
 import java.util.Properties;
 
-public class PropertiesUtil {
+public final class PropertiesUtil {
     private static final Properties PROPERTIES = new Properties();
 
     static {
@@ -14,7 +14,7 @@ public class PropertiesUtil {
     }
 
     public static String getProperties(String key) {
-       return PROPERTIES.getProperty(key);
+        return PROPERTIES.getProperty(key);
     }
 
     public static void loadProperties() {
