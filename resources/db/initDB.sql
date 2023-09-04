@@ -25,7 +25,7 @@ CREATE TABLE movie
 (
     id            SERIAL PRIMARY KEY,
     name          VARCHAR(256) NOT NULL,
-    director_id   INTEGER REFERENCES director (id),
+    director_id   INTEGER REFERENCES director (id) ON DELETE CASCADE,
     premiere_date DATE         NOT NULL,
     country       VARCHAR(128) NOT NULL,
     genre         VARCHAR(128) NOT NULL

@@ -22,6 +22,13 @@ public class Movie {
         this.genre = genre;
     }
 
+    public Movie() {
+    }
+
+    public void saveActor(Actor actor) {
+        actors.add(actor);
+    }
+
     public Integer getId() {
         return id;
     }

@@ -13,9 +13,6 @@ public class User {
         this.email = email;
     }
 
-    public User() {
-    }
-
     public Integer getId() {
         return id;
     }
