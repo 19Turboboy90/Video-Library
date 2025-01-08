@@ -16,7 +16,8 @@ public class MovieMainPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("movies", movieService.findAllMovies());
+        var allMovies = movieService.findAllMovies();
+        req.setAttribute("movies", allMovies);
         req.getRequestDispatcher(JspHelper.prefixPath("movies-main-page")).forward(req, resp);
     }
 }

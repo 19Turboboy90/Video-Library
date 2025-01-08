@@ -16,7 +16,9 @@ public class MovieMapper implements Mapper<Movie, MovieInfoDto> {
     public MovieInfoDto mapper(Movie object) {
         return MovieInfoDto.builder()
                 .id(object.getId())
-                .description(String.format("%s, %s", object.getName(), object.getPremierDate()))
+                .description("""
+                        %s, %s
+                        """.formatted(object.getName(), object.getPremierDate()))
                 .build();
     }
 
