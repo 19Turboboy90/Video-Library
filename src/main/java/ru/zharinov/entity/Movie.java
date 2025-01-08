@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-
 public class Movie {
     private Integer id;
     private String name;
