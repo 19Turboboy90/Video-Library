@@ -9,7 +9,7 @@
     <h1>Список фильмов:</h1>
     <c:forEach var="movie" items="${requestScope.movies}">
         <li>
-            <a href="${pageContext.request.contextPath}/movies?movieId=${movie.id}">${movie.description}</a>
+            <a href="${pageContext.request.contextPath}/movie?movieId=${movie.id}">${movie.description}</a>
         </li>
     </c:forEach>
 </div>

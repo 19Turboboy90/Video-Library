@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import ru.zharinov.entity.Actor;
 import ru.zharinov.util.ConnectionManager;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,12 +19,24 @@ import static lombok.AccessLevel.PRIVATE;
 public class ActorDao implements Dao<Integer, Actor> {
     private static final ActorDao INSTANCE = new ActorDao();
 
-    public static final String GET_ALL_ACTORS_BY_MOVIE_ID = """
-            SELECT a.id, a.name, a.date_of_birth
+    private final MovieDao movieDao = MovieDao.getInstance();
+
+    private static final String FIND_ALL_ACTORS_BY_MOVIE_ID = """
+            SELECT a.id AS actor_id,
+                   a.name AS actor_name,
+                   a.date_of_birth AS actor_date_of_birth
             FROM actor a
                      LEFT JOIN actor_movie am ON a.id = am.actor_id
                      LEFT JOIN movie m ON am.movie_id = m.id
             WHERE m.id = ?;
+            """;
+
+    private static final String FIND_ACTOR_BY_ID = """
+            SELECT a.id AS actor_id,
+                   a.name AS actor_name,
+                   a.date_of_birth AS actor_date_of_birth
+            FROM actor a
+            WHERE a.id = ?
             """;
 
     @Override
@@ -32,8 +45,18 @@ public class ActorDao implements Dao<Integer, Actor> {
     }
 
     @Override
+    @SneakyThrows
     public Optional<Actor> findById(Integer id) {
-        return Optional.empty();
+        try (Connection connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_ACTOR_BY_ID)) {
+            preparedStatement.setObject(1, id);
+            var resultSet = preparedStatement.executeQuery();
+            Actor actor = null;
+            if (resultSet.next()) {
+                actor = buildActor(resultSet);
+            }
+            return Optional.ofNullable(actor);
+        }
     }
 
     @Override
@@ -54,23 +77,29 @@ public class ActorDao implements Dao<Integer, Actor> {
     @SneakyThrows
     public List<Actor> findAllActorByMovieId(Integer movieId) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(GET_ALL_ACTORS_BY_MOVIE_ID)) {
+             var preparedStatement = connection.prepareStatement(FIND_ALL_ACTORS_BY_MOVIE_ID)) {
             preparedStatement.setObject(1, movieId);
             List<Actor> actors = new ArrayList<>();
             var resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                actors.add(biuldActor(resultSet));
+                actors.add(buildActor(resultSet));
             }
             return actors;
         }
     }
 
-    private Actor biuldActor(ResultSet resultSet) throws SQLException {
-        return Actor.builder()
-                .id(resultSet.getObject("a.id", Integer.class))
-                .name(resultSet.getObject("a.name", String.class))
-                .dateOfBirthday(resultSet.getObject("a.date_of_birth", Date.class).toLocalDate())
+    private Actor buildActor(ResultSet resultSet) throws SQLException {
+        var actor = Actor.builder()
+                .id(resultSet.getObject("actor_id", Integer.class))
+                .name(resultSet.getObject("actor_name", String.class))
+                .dateOfBirthday(resultSet.getObject("actor_date_of_birth", Date.class).toLocalDate())
                 .build();
+
+//        var movies = movieDao.findAllMovieByActorId(actor.getId());
+//
+//        actor.setMovies(movies);
+
+        return actor;
     }
 
     public static ActorDao getInstance() {

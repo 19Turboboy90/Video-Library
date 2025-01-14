@@ -1,5 +1,6 @@
 package ru.zharinov.dto;
 
+
 import lombok.Builder;
 import lombok.Value;
 
@@ -8,9 +9,12 @@ import java.util.List;
 
 @Value
 @Builder
-public class ActorDto {
+public class MovieAllInfoDto {
     Integer id;
     String name;
-    LocalDate dateOfBirthday;
-    List<MovieInfoDto> movies;
+    LocalDate premierDate;
+    String country;
+    String genre;
+    DirectorDto director;
+    List<ActorDto> actors;
 }

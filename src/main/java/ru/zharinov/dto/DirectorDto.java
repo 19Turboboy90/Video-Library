@@ -10,5 +10,5 @@ import java.time.LocalDate;
 public class DirectorDto {
     Integer id;
     String name;
-    LocalDate dateOfBirth;
+    LocalDate dateOfBirthday;
 }

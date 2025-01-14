@@ -9,13 +9,15 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class ActorMapper implements Mapper<Actor, ActorDto> {
     private static final ActorMapper INSTANCE = new ActorMapper();
+    private final MovieMapper movieMapper = MovieMapper.getInstance();
 
     @Override
     public ActorDto mapper(Actor object) {
         return ActorDto.builder()
                 .id(object.getId())
                 .name(object.getName())
-                .dateOfBirth(object.getDateOfBirthday())
+                .dateOfBirthday(object.getDateOfBirthday())
+//                .movies(object.getMovies().stream().map(movieMapper::mapper).toList())
                 .build();
     }
 

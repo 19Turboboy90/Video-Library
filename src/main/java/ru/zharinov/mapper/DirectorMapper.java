@@ -15,7 +15,7 @@ public class DirectorMapper implements Mapper<Director, DirectorDto> {
         return DirectorDto.builder()
                 .id(object.getId())
                 .name(object.getName())
-                .dateOfBirth(object.getDateOfBirthday())
+                .dateOfBirthday(object.getDateOfBirthday())
                 .build();
     }
 

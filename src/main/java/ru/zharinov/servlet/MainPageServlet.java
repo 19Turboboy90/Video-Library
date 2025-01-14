@@ -11,13 +11,13 @@ import ru.zharinov.util.JspHelper;
 import java.io.IOException;
 
 @WebServlet("/movies")
-public class MovieMainPageServlet extends HttpServlet {
+public class MainPageServlet extends HttpServlet {
     private final MovieService movieService = MovieService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var allMovies = movieService.findAllMovies();
         req.setAttribute("movies", allMovies);
-        req.getRequestDispatcher(JspHelper.prefixPath("movies-main-page")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.prefixPath("main-page")).forward(req, resp);
     }
 }

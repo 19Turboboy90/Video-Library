@@ -9,8 +9,6 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class MovieMapper implements Mapper<Movie, MovieInfoDto> {
     private static final MovieMapper INSTANCE = new MovieMapper();
-    private final ActorMapper actorMapper = ActorMapper.getInstance();
-    private final DirectorMapper directorMapper = DirectorMapper.getInstance();
 
     @Override
     public MovieInfoDto mapper(Movie object) {
