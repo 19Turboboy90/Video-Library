@@ -7,8 +7,9 @@ import ru.zharinov.entity.Actor;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class ActorMapper implements Mapper<Actor, ActorDto> {
-    private static final ActorMapper INSTANCE = new ActorMapper();
+public class ActorWithMoviesMapper implements Mapper<Actor, ActorDto> {
+    private static final ActorWithMoviesMapper INSTANCE = new ActorWithMoviesMapper();
+    private final MovieMapper movieMapper = MovieMapper.getInstance();
 
     @Override
     public ActorDto mapper(Actor object) {
@@ -16,10 +17,11 @@ public class ActorMapper implements Mapper<Actor, ActorDto> {
                 .id(object.getId())
                 .name(object.getName())
                 .dateOfBirthday(object.getDateOfBirthday())
+                .movies(object.getMovies().stream().map(movieMapper::mapper).toList())
                 .build();
     }
 
-    public static ActorMapper getInstance() {
+    public static ActorWithMoviesMapper getInstance() {
         return INSTANCE;
     }
 }

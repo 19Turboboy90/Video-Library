@@ -4,8 +4,7 @@ import lombok.NoArgsConstructor;
 import ru.zharinov.dao.ActorDao;
 import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.ActorDto;
-import ru.zharinov.exception.CreateNotFoundException;
-import ru.zharinov.mapper.ActorMapper;
+import ru.zharinov.mapper.ActorWithMoviesMapper;
 
 import java.util.Optional;
 
@@ -15,17 +14,16 @@ import static lombok.AccessLevel.PRIVATE;
 public class ActorService {
     private static final ActorService INSTANCE = new ActorService();
     private final ActorDao actorDao = ActorDao.getInstance();
-    private final ActorMapper actorMapper = ActorMapper.getInstance();
+    private final ActorWithMoviesMapper actorMapper = ActorWithMoviesMapper.getInstance();
     private final MovieDao movieDao = MovieDao.getInstance();
-    private final CreateNotFoundException exception = new CreateNotFoundException();
 
-    public Optional<ActorDto> findActorByMovieId(Integer id) {
-        var actor = actorDao.findById(id);
+    public Optional<ActorDto> findActorById(Integer actorId) {
+        var actor = actorDao.findById(actorId);
         if (actor.isPresent()) {
             var allMovieByActorId = movieDao.findAllMovieByActorId(actor.get().getId());
             actor.get().setMovies(allMovieByActorId);
         } else {
-            throw new RuntimeException("ID is not found = " + id);
+            throw new RuntimeException("ID is not found = " + actorId);
         }
         return actor.map(actorMapper::mapper);
     }

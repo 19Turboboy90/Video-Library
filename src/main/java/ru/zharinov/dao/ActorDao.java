@@ -19,8 +19,6 @@ import static lombok.AccessLevel.PRIVATE;
 public class ActorDao implements Dao<Integer, Actor> {
     private static final ActorDao INSTANCE = new ActorDao();
 
-    private final MovieDao movieDao = MovieDao.getInstance();
-
     private static final String FIND_ALL_ACTORS_BY_MOVIE_ID = """
             SELECT a.id AS actor_id,
                    a.name AS actor_name,
@@ -46,10 +44,10 @@ public class ActorDao implements Dao<Integer, Actor> {
 
     @Override
     @SneakyThrows
-    public Optional<Actor> findById(Integer id) {
+    public Optional<Actor> findById(Integer actorId) {
         try (Connection connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ACTOR_BY_ID)) {
-            preparedStatement.setObject(1, id);
+            preparedStatement.setObject(1, actorId);
             var resultSet = preparedStatement.executeQuery();
             Actor actor = null;
             if (resultSet.next()) {
@@ -89,17 +87,11 @@ public class ActorDao implements Dao<Integer, Actor> {
     }
 
     private Actor buildActor(ResultSet resultSet) throws SQLException {
-        var actor = Actor.builder()
+        return Actor.builder()
                 .id(resultSet.getObject("actor_id", Integer.class))
                 .name(resultSet.getObject("actor_name", String.class))
                 .dateOfBirthday(resultSet.getObject("actor_date_of_birth", Date.class).toLocalDate())
                 .build();
-
-//        var movies = movieDao.findAllMovieByActorId(actor.getId());
-//
-//        actor.setMovies(movies);
-
-        return actor;
     }
 
     public static ActorDao getInstance() {

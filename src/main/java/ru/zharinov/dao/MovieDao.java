@@ -2,8 +2,6 @@ package ru.zharinov.dao;
 
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import ru.zharinov.entity.Actor;
-import ru.zharinov.entity.Director;
 import ru.zharinov.entity.Movie;
 import ru.zharinov.util.ConnectionManager;
 
@@ -19,7 +17,6 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class MovieDao implements Dao<Integer, Movie> {
     private static final MovieDao INSTANCE = new MovieDao();
-    private final ActorDao actorDao = ActorDao.getInstance();
 
     private static final String FIND_ALL_MOVIES = """
             SELECT m.id,
@@ -30,17 +27,7 @@ public class MovieDao implements Dao<Integer, Movie> {
             FROM movie m
             """;
 
-    private static final String FIND_MOVIE_BY_ID = """
-            SELECT m.id AS movie_id,
-                   m.name AS movie_name,
-                   m.premiere_date AS movie_premiere_date,
-                   m.country AS movie_country,
-                   m.genre AS movie_genre,
-                   d.id AS director_id,
-                   d.name AS director_name,
-                   d.date_of_birth AS director_date_of_birth
-            FROM movie m
-                     LEFT JOIN director d ON m.director_id = d.id
+    private static final String FIND_MOVIE_BY_ID = FIND_ALL_MOVIES + """
             WHERE m.id = ?
             """;
 
@@ -48,6 +35,11 @@ public class MovieDao implements Dao<Integer, Movie> {
             LEFT JOIN actor_movie am ON m.id = am.movie_id
             LEFT JOIN actor a ON am.actor_id = a.id
             WHERE a.id = ?
+            """;
+
+    private static final String FIND_ALL_MOVIES_BY_DIRECTOR_ID = FIND_ALL_MOVIES + """
+            JOIN director d on d.id = m.director_id
+            WHERE d.id = ?;
             """;
 
 
@@ -74,17 +66,25 @@ public class MovieDao implements Dao<Integer, Movie> {
             var resultSet = preparedStatement.executeQuery();
             Movie movie = null;
             if (resultSet.next()) {
-                movie = buildMovieAllInformation(resultSet);
+                movie = buildMovie(resultSet);
             }
             return Optional.ofNullable(movie);
         }
     }
 
+    public List<Movie> findAllMovieByActorId(Integer actorId) {
+        return findAllMovieById(actorId, FIND_ALL_MOVIES_BY_ACTOR_ID);
+    }
+
+    public List<Movie> findAllMoviesByDirectorId(Integer directorId) {
+        return findAllMovieById(directorId, FIND_ALL_MOVIES_BY_DIRECTOR_ID);
+    }
+
     @SneakyThrows
-    public List<Movie> findAllMovieByActorId(Integer id) {
+    private List<Movie> findAllMovieById(Integer actorId, String sql) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(FIND_ALL_MOVIES_BY_ACTOR_ID)) {
-            preparedStatement.setObject(1, id);
+             var preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setObject(1, actorId);
             var resultSet = preparedStatement.executeQuery();
             List<Movie> movies = new ArrayList<>();
             while (resultSet.next()) {
@@ -117,29 +117,6 @@ public class MovieDao implements Dao<Integer, Movie> {
                 .country(resultSet.getObject("country", String.class))
                 .genre(resultSet.getObject("genre", String.class))
                 .build();
-    }
-
-    private Movie buildMovieAllInformation(ResultSet resultSet) throws SQLException {
-        var movie = Movie.builder()
-                .id(resultSet.getObject("movie_id", Integer.class))
-                .name(resultSet.getObject("movie_name", String.class))
-                .premierDate(resultSet.getObject("movie_premiere_date", Date.class).toLocalDate())
-                .country(resultSet.getObject("movie_country", String.class))
-                .genre(resultSet.getObject("movie_genre", String.class))
-                .build();
-
-        Director director = Director.builder()
-                .id(resultSet.getObject("director_id", Integer.class))
-                .name(resultSet.getObject("director_name", String.class))
-                .dateOfBirthday(resultSet.getObject("director_date_of_birth", Date.class).toLocalDate())
-                .build();
-
-        movie.setDirector(director);
-
-        List<Actor> actors = actorDao.findAllActorByMovieId(movie.getId());
-        movie.setActors(actors);
-
-        return movie;
     }
 
     public static MovieDao getInstance() {

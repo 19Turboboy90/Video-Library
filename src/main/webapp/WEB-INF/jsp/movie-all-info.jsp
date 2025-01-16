@@ -27,8 +27,7 @@
                 <div style="padding-block-start: 8px; padding-block-end: 8px; display: flex">
                     <div style="width:  160px">Продюсер:</div>
                     <div>
-                        <a href="${pageContext.request.contextPath}/director?directorId=
-                        ${requestScope.movie.director.id}">${requestScope.movie.director.name}</a>
+                        <a href="${pageContext.request.contextPath}/director?directorId=${requestScope.movie.director.id}">${requestScope.movie.director.name}</a>
                     </div>
                 </div>
             </div>
@@ -42,6 +41,13 @@
                 </li>
             </c:forEach>
         </div>
+    </div>
+    <br>
+    <br>
+    <div>
+        <form action="movies" method="get">
+            <button type="submit">На главную страницу</button>
+        </form>
     </div>
 </div>
 </body>
