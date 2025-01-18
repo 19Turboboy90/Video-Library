@@ -13,11 +13,19 @@ import java.io.IOException;
 @WebServlet("/movies")
 public class MainPageServlet extends HttpServlet {
     private final MovieService movieService = MovieService.getInstance();
+    private static final Integer MIN_DATE = 1800;
+    private static final Integer MAX_DATE = 3000;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var allMovies = movieService.findAllMovies();
-        req.setAttribute("movies", allMovies);
+        var fromDate = req.getParameter("fromDate");
+        var toDate = req.getParameter("toDate");
+        var from = fromDate == null ? MIN_DATE : Integer.parseInt(fromDate);
+        var to = toDate == null ? MAX_DATE : Integer.parseInt(toDate);
+
+        var allMoviesByDate = movieService.findAllMoviesByDate(from, to);
+        req.setAttribute("movies", allMoviesByDate);
         req.getRequestDispatcher(JspHelper.prefixPath("main-page")).forward(req, resp);
     }
 }
+

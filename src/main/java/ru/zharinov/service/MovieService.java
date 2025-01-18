@@ -25,8 +25,12 @@ public class MovieService {
     private final MovieAllInfoMapper movieAllInfoMapper = MovieAllInfoMapper.getInstance();
 
 
-    public List<MovieInfoDto> findAllMovies() {
-        return movieDao.findAll().stream().map(movieMapper::mapper).toList();
+//    public List<MovieInfoDto> findAllMovies() {
+//        return movieDao.findAll().stream().map(movieMapper::mapper).toList();
+//    }
+
+    public List<MovieInfoDto> findAllMoviesByDate(Integer fromDate, Integer toFrom) {
+        return movieDao.findAllMoviesByDate(fromDate, toFrom).stream().map(movieMapper::mapper).toList();
     }
 
     public Optional<MovieAllInfoDto> findMovieById(Integer movieId) {

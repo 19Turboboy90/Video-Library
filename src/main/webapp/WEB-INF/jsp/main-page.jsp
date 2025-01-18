@@ -7,11 +7,25 @@
 <body>
 <div>
     <h1>Список фильмов:</h1>
+    <form action="movies" method="get">
+        <label for="fromDate">Поиск от</label>
+        <input type="text" id="fromDate" name="fromDate" placeholder="ввести только год">
+        <label for="toDate">Поиск до</label>
+        <input type="text" id="toDate" name="toDate" placeholder="ввести только год">
+        <button type="submit">Отфильтровать</button>
+    </form>
+
     <c:forEach var="movie" items="${requestScope.movies}">
         <li>
             <a href="${pageContext.request.contextPath}/movie?movieId=${movie.id}">${movie.description}</a>
         </li>
     </c:forEach>
+
+    <div>
+        <form action="movies" method="get">
+            <button type="submit">Отмена</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

@@ -27,6 +27,10 @@ public class MovieDao implements Dao<Integer, Movie> {
             FROM movie m
             """;
 
+    private static final String FIND_ALL_MOVIES_BY_DATE = FIND_ALL_MOVIES + """
+            WHERE EXTRACT(year FROM m.premiere_date) >= ? AND EXTRACT(year FROM m.premiere_date)  <= ?;
+            """;
+
     private static final String FIND_MOVIE_BY_ID = FIND_ALL_MOVIES + """
             WHERE m.id = ?
             """;
@@ -48,6 +52,21 @@ public class MovieDao implements Dao<Integer, Movie> {
     public List<Movie> findAll() {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ALL_MOVIES)) {
+            var resultSet = preparedStatement.executeQuery();
+            List<Movie> movies = new ArrayList<>();
+            while (resultSet.next()) {
+                movies.add(buildMovie(resultSet));
+            }
+            return movies;
+        }
+    }
+
+    @SneakyThrows
+    public List<Movie> findAllMoviesByDate(int fromDate, int toDate) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_ALL_MOVIES_BY_DATE)) {
+            preparedStatement.setObject(1, fromDate);
+            preparedStatement.setObject(2, toDate);
             var resultSet = preparedStatement.executeQuery();
             List<Movie> movies = new ArrayList<>();
             while (resultSet.next()) {
