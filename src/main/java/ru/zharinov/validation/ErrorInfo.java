@@ -1,4 +1,4 @@
-package ru.zharinov.exception;
+package ru.zharinov.validation;
 
 import lombok.Value;
 

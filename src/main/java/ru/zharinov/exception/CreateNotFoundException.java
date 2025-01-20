@@ -1,16 +1,13 @@
 package ru.zharinov.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ru.zharinov.validation.ErrorInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
+@AllArgsConstructor
 @Getter
-public class CreateNotFoundException {
-    private final List<ErrorInfo> errors = new ArrayList<>();
-
-    public void add(ErrorInfo errorInfo) {
-        this.errors.add(errorInfo);
-    }
+public class CreateNotFoundException extends RuntimeException {
+    private final List<ErrorInfo> errors;
 }

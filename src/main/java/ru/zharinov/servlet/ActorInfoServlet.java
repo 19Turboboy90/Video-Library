@@ -5,11 +5,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.zharinov.exception.CreateNotFoundException;
-import ru.zharinov.exception.ErrorInfo;
 import ru.zharinov.service.ActorService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
+import ru.zharinov.validation.ErrorInfo;
 
 import java.io.IOException;
 
@@ -30,9 +29,8 @@ public class ActorInfoServlet extends HttpServlet {
                     }
                 },
                 () -> {
-                    CreateNotFoundException errors = new CreateNotFoundException();
-                    errors.add(ErrorInfo.of("Error in the ID", "Not found id = " + actorId));
-                    req.setAttribute("errorMessage", errors.getErrors());
+                    var errorInTheId = ErrorInfo.of("Error in the ID", "Not found id = " + actorId);
+                    req.setAttribute("errorMessage", errorInTheId);
                     try {
                         req.getRequestDispatcher(JspHelper.prefixPath("errorPage")).forward(req, resp);
                     } catch (ServletException | IOException e) {

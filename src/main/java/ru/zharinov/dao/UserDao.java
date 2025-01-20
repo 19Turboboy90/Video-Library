@@ -8,6 +8,7 @@ import ru.zharinov.util.ConnectionManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,12 @@ public class UserDao implements Dao<Integer, User> {
             FROM users u
             """;
 
-    public static final String FIND_USER_BY_EMAIL_AND_PASSWORD = FIND_ALL_USERS + """
+    private static final String FIND_USER_BY_EMAIL_AND_PASSWORD = FIND_ALL_USERS + """
             WHERE u.email = ? AND u.password = ?;
+            """;
+
+    private static final String SAVE_USER = """
+            INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)
             """;
 
 
@@ -58,8 +63,21 @@ public class UserDao implements Dao<Integer, User> {
 
 
     @Override
+    @SneakyThrows
     public User save(User entity) {
-        return null;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_USER, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getEmail());
+            preparedStatement.setObject(3, entity.getPassword());
+            preparedStatement.setObject(4, entity.getRole().name());
+
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            entity.setId(generatedKeys.getObject("id", Integer.class));
+            return entity;
+        }
     }
 
     @Override

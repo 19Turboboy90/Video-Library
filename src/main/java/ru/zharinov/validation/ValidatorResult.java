@@ -1,7 +1,6 @@
 package ru.zharinov.validation;
 
 import lombok.Getter;
-import ru.zharinov.exception.ErrorInfo;
 
 import java.util.ArrayList;
 import java.util.List;
