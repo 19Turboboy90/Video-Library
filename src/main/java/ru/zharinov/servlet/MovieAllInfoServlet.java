@@ -9,10 +9,11 @@ import ru.zharinov.exception.CreateNotFoundException;
 import ru.zharinov.exception.ErrorInfo;
 import ru.zharinov.service.MovieService;
 import ru.zharinov.util.JspHelper;
+import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet("/movie")
+@WebServlet(UrlPath.MOVIE)
 public class MovieAllInfoServlet extends HttpServlet {
     private final MovieService movieService = MovieService.getInstance();
 

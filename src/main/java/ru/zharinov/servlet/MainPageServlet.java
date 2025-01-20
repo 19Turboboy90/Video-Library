@@ -7,10 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.service.MovieService;
 import ru.zharinov.util.JspHelper;
+import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet("/movies")
+@WebServlet(UrlPath.MOVIES)
 public class MainPageServlet extends HttpServlet {
     private final MovieService movieService = MovieService.getInstance();
     private static final Integer MIN_DATE = 1800;

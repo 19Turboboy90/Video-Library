@@ -9,10 +9,11 @@ import ru.zharinov.exception.CreateNotFoundException;
 import ru.zharinov.exception.ErrorInfo;
 import ru.zharinov.service.DirectorService;
 import ru.zharinov.util.JspHelper;
+import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet("/director")
+@WebServlet(UrlPath.DIRECTOR)
 public class DirectorInfoServlet extends HttpServlet {
     private final DirectorService directorService = DirectorService.getInstance();
 

@@ -30,6 +30,13 @@
                         <a href="${pageContext.request.contextPath}/director?directorId=${requestScope.movie.director.id}">${requestScope.movie.director.name}</a>
                     </div>
                 </div>
+                <div>
+                    <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
+                        <form action="update-movie" method="get">
+                            <button type="submit">Изменить актера</button>
+                        </form>
+                    </c:if>
+                </div>
             </div>
         </div>
 

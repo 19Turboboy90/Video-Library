@@ -9,10 +9,11 @@ import ru.zharinov.exception.CreateNotFoundException;
 import ru.zharinov.exception.ErrorInfo;
 import ru.zharinov.service.ActorService;
 import ru.zharinov.util.JspHelper;
+import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet("/actor")
+@WebServlet(UrlPath.ACTOR)
 public class ActorInfoServlet extends HttpServlet {
     private final ActorService actorService = ActorService.getInstance();
 
