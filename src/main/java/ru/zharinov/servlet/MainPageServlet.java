@@ -21,8 +21,8 @@ public class MainPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var fromDate = req.getParameter("fromDate");
         var toDate = req.getParameter("toDate");
-        var from = fromDate == null ? MIN_DATE : Integer.parseInt(fromDate);
-        var to = toDate == null ? MAX_DATE : Integer.parseInt(toDate);
+        var from = (fromDate == null || fromDate.isEmpty()) ? MIN_DATE : Integer.parseInt(fromDate);
+        var to = (toDate == null || toDate.isEmpty()) ? MAX_DATE : Integer.parseInt(toDate);
 
         var allMoviesByDate = movieService.findAllMoviesByDate(from, to);
         req.setAttribute("movies", allMoviesByDate);

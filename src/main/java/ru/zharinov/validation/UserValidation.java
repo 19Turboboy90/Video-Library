@@ -26,7 +26,7 @@ public class UserValidation implements Validator<CreateUserDto> {
     }
 
     private static void validationEmail(CreateUserDto object, ValidatorResult validatorResult) {
-        if (object.getEmail() == null || !object.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+        if (object.getEmail() == null || !object.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             validatorResult.add(ErrorInfo.of("invalid.email", "The email not must to be empty"));
         }
     }

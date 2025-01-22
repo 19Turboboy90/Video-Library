@@ -19,7 +19,7 @@
     <br>
     <div>
         <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
-            <form action="update-actor" method="get">
+            <form action="admin/update-actor" method="get">
                 <button type="submit">Изменить актера</button>
             </form>
         </c:if>

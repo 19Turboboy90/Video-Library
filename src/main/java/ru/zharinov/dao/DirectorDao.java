@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -29,6 +30,10 @@ public class DirectorDao implements Dao<Integer, Director> {
 
     private static final String FIND_DIRECTOR_BY_ID = FIND_ALL_DIRECTORS + """
             WHERE d.id = ?;
+            """;
+
+    private static final String SAVE_DIRECTOR = """
+            INSERT INTO director (name, date_of_birth) VALUES (?, ?);
             """;
 
     @Override
@@ -60,8 +65,18 @@ public class DirectorDao implements Dao<Integer, Director> {
     }
 
     @Override
+    @SneakyThrows
     public Director save(Director entity) {
-        return null;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_DIRECTOR, RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getDateOfBirthday());
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            entity.setId(generatedKeys.getObject("id", Integer.class));
+            return entity;
+        }
     }
 
     @Override
