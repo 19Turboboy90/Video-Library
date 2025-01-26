@@ -1,4 +1,4 @@
-package ru.zharinov.dto;
+package ru.zharinov.dto.movie;
 
 import lombok.Builder;
 import lombok.Value;

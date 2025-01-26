@@ -28,18 +28,8 @@
     <div style="display: flex">
         <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
             <div style="margin-right: 10px">
-                <form action="admin/add-movie" method="get">
-                    <button type="submit">Добавить фильм</button>
-                </form>
-            </div>
-            <div style="margin-right: 10px">
-                <form action="admin/add-actor" method="get">
-                    <button type="submit">Добавить актера</button>
-                </form>
-            </div>
-            <div style="margin-right: 10px">
-                <form action="admin/add-director" method="get">
-                    <button type="submit">Добавить режиссера</button>
+                <form action="admin" method="get">
+                    <button type="submit">Администрирование</button>
                 </form>
             </div>
         </c:if>

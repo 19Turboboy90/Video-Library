@@ -1,7 +1,7 @@
 package ru.zharinov.validation;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.CreateUserDto;
+import ru.zharinov.dto.user.CreateUserDto;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -14,15 +14,8 @@ public class UserValidation implements Validator<CreateUserDto> {
         ValidatorResult validatorResult = new ValidatorResult();
         validationName(object, validatorResult);
         validationEmail(object, validatorResult);
-        validationRole(object, validatorResult);
         validationPassword(object, validatorResult);
         return validatorResult;
-    }
-
-    private static void validationRole(CreateUserDto object, ValidatorResult validatorResult) {
-        if (object.getRole() == null) {
-            validatorResult.add(ErrorInfo.of("invalid.role", "The role not must to be empty"));
-        }
     }
 
     private static void validationEmail(CreateUserDto object, ValidatorResult validatorResult) {

@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
-import ru.zharinov.dto.UserDto;
+import ru.zharinov.dto.user.UserDto;
 import ru.zharinov.service.UserService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;

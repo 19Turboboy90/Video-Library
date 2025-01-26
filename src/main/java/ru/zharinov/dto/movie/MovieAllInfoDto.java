@@ -1,8 +1,11 @@
-package ru.zharinov.dto;
+package ru.zharinov.dto.movie;
 
 
 import lombok.Builder;
 import lombok.Value;
+import ru.zharinov.dto.actor.ActorDto;
+import ru.zharinov.dto.director.DirectorDto;
+import ru.zharinov.dto.director.DirectorWithMoviesDto;
 
 import java.time.LocalDate;
 import java.util.List;

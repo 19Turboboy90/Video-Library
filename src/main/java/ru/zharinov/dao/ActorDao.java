@@ -5,41 +5,50 @@ import lombok.SneakyThrows;
 import ru.zharinov.entity.Actor;
 import ru.zharinov.util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ActorDao implements Dao<Integer, Actor> {
     private static final ActorDao INSTANCE = new ActorDao();
 
-    private static final String FIND_ALL_ACTORS_BY_MOVIE_ID = """
+    private static final String FIND_ALL_ACTORS = """
             SELECT a.id AS actor_id,
                    a.name AS actor_name,
                    a.date_of_birth AS actor_date_of_birth
             FROM actor a
+            """;
+
+    private static final String FIND_ALL_ACTORS_BY_MOVIE_ID = FIND_ALL_ACTORS + """
                      LEFT JOIN actor_movie am ON a.id = am.actor_id
                      LEFT JOIN movie m ON am.movie_id = m.id
             WHERE m.id = ?;
             """;
 
-    private static final String FIND_ACTOR_BY_ID = """
-            SELECT a.id AS actor_id,
-                   a.name AS actor_name,
-                   a.date_of_birth AS actor_date_of_birth
-            FROM actor a
+    private static final String FIND_ACTOR_BY_ID = FIND_ALL_ACTORS + """
             WHERE a.id = ?
             """;
 
+    private static final String SAVE_ACTOR = """
+            INSERT INTO actor (name, date_of_birth) VALUES (?, ?);
+            """;
+
+    private static final String SAVE_ACTOR_TO_ACTOR_MOVIE = """
+            INSERT INTO actor_movie (actor_id) VALUES (?);
+            """;
+
     @Override
+    @SneakyThrows
     public List<Actor> findAll() {
-        return List.of();
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_ALL_ACTORS)) {
+            return getActors(preparedStatement);
+        }
     }
 
     @Override
@@ -58,8 +67,19 @@ public class ActorDao implements Dao<Integer, Actor> {
     }
 
     @Override
+    @SneakyThrows
     public Actor save(Actor entity) {
-        return null;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_ACTOR, RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getDateOfBirthday());
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            entity.setId(generatedKeys.getObject("id", Integer.class));
+            saveActorToActorMovie(entity.getId());
+            return entity;
+        }
     }
 
     @Override
@@ -77,13 +97,26 @@ public class ActorDao implements Dao<Integer, Actor> {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ALL_ACTORS_BY_MOVIE_ID)) {
             preparedStatement.setObject(1, movieId);
-            List<Actor> actors = new ArrayList<>();
-            var resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                actors.add(buildActor(resultSet));
-            }
-            return actors;
+            return getActors(preparedStatement);
         }
+    }
+
+    @SneakyThrows
+    private void saveActorToActorMovie(Integer actorId) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_ACTOR_TO_ACTOR_MOVIE)) {
+            preparedStatement.setObject(1, actorId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    private List<Actor> getActors(PreparedStatement preparedStatement) throws SQLException {
+        List<Actor> actors = new ArrayList<>();
+        var resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            actors.add(buildActor(resultSet));
+        }
+        return actors;
     }
 
     private Actor buildActor(ResultSet resultSet) throws SQLException {

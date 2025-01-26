@@ -1,29 +1,29 @@
 package ru.zharinov.validation;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.director.CreateDirectorDto;
+import ru.zharinov.dto.actor.CreateActorDto;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class DirectorValidation implements Validator<CreateDirectorDto> {
-    private static final DirectorValidation INSTANCE = new DirectorValidation();
+public class ActorValidator implements Validator<CreateActorDto> {
+    private static final ActorValidator INSTANCE = new ActorValidator();
 
     @Override
-    public ValidatorResult isValid(CreateDirectorDto object) {
+    public ValidatorResult isValid(CreateActorDto object) {
         ValidatorResult validatorResult = new ValidatorResult();
         validationDate(object, validatorResult);
         validationName(object, validatorResult);
         return validatorResult;
     }
 
-    private static void validationDate(CreateDirectorDto object, ValidatorResult validatorResult) {
+    private static void validationDate(CreateActorDto object, ValidatorResult validatorResult) {
         if (object.getDateOfBirthday() == null || object.getDateOfBirthday().isEmpty()) {
             validatorResult.add(ErrorInfo.of("invalid dateOfBirthday", "The date not must to be empty"));
         }
     }
 
-    private static void validationName(CreateDirectorDto object, ValidatorResult validatorResult) {
+    private static void validationName(CreateActorDto object, ValidatorResult validatorResult) {
         if (object.getName() == null || object.getName().trim().isEmpty()) {
             validatorResult.add(ErrorInfo.of("invalid.name", "The name not to be empty"));
         } else if (object.getName().length() < 4 || object.getName().length() > 50) {
@@ -31,7 +31,7 @@ public class DirectorValidation implements Validator<CreateDirectorDto> {
         }
     }
 
-    public static DirectorValidation getInstance() {
+    public static ActorValidator getInstance() {
         return INSTANCE;
     }
 }

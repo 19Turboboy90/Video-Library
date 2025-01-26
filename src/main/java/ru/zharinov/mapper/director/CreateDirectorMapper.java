@@ -1,8 +1,9 @@
-package ru.zharinov.mapper;
+package ru.zharinov.mapper.director;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.CreateDirectorDto;
+import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.entity.Director;
+import ru.zharinov.mapper.Mapper;
 import ru.zharinov.util.DateFormatter;
 
 import static lombok.AccessLevel.PRIVATE;

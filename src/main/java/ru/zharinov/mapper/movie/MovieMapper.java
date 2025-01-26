@@ -1,8 +1,9 @@
-package ru.zharinov.mapper;
+package ru.zharinov.mapper.movie;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.MovieInfoDto;
+import ru.zharinov.dto.movie.MovieInfoDto;
 import ru.zharinov.entity.Movie;
+import ru.zharinov.mapper.Mapper;
 
 import static lombok.AccessLevel.PRIVATE;
 

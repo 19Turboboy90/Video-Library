@@ -1,41 +1,37 @@
-package ru.zharinov.servlet;
+package ru.zharinov.servlet.director;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.zharinov.dto.user.CreateUserDto;
-import ru.zharinov.entity.Role;
+import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.exception.CreateNotFoundException;
-import ru.zharinov.service.UserService;
+import ru.zharinov.service.DirectorService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet(UrlPath.REGISTRATION)
-public class RegistrationServlet extends HttpServlet {
-    private static final UserService userService = UserService.getInstance();
+@WebServlet(UrlPath.SAVE_DIRECTOR)
+public class DirectorSaveServlet extends HttpServlet {
+    private final DirectorService directorService = DirectorService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("roles", Role.values());
-        req.getRequestDispatcher(JspHelper.prefixPath("registration")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.prefixPath("director-create")).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var userDto = CreateUserDto.builder()
+        var director = CreateDirectorDto.builder()
                 .name(req.getParameter("name"))
-                .email(req.getParameter("email"))
-                .password(req.getParameter("password"))
-                .role(req.getParameter("role"))
+                .dateOfBirthday(req.getParameter("birthday"))
                 .build();
 
         try {
-            userService.save(userDto);
-            resp.sendRedirect("/login");
+            directorService.save(director);
+            resp.sendRedirect("/movies");
         } catch (CreateNotFoundException e) {
             req.setAttribute("errors", e.getErrors());
             doGet(req, resp);

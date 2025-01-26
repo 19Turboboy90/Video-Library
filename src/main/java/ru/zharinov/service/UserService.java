@@ -3,11 +3,11 @@ package ru.zharinov.service;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.dao.UserDao;
-import ru.zharinov.dto.CreateUserDto;
-import ru.zharinov.dto.UserDto;
+import ru.zharinov.dto.user.CreateUserDto;
+import ru.zharinov.dto.user.UserDto;
 import ru.zharinov.exception.CreateNotFoundException;
-import ru.zharinov.mapper.CreateUserMapper;
-import ru.zharinov.mapper.UserMapper;
+import ru.zharinov.mapper.user.CreateUserMapper;
+import ru.zharinov.mapper.user.UserMapper;
 import ru.zharinov.validation.UserValidation;
 
 import java.util.Optional;

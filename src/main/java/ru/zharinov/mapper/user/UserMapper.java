@@ -1,8 +1,9 @@
-package ru.zharinov.mapper;
+package ru.zharinov.mapper.user;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.UserDto;
+import ru.zharinov.dto.user.UserDto;
 import ru.zharinov.entity.User;
+import ru.zharinov.mapper.Mapper;
 
 import static lombok.AccessLevel.PRIVATE;
 

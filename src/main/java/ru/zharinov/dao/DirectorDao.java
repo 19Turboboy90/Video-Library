@@ -8,6 +8,7 @@ import ru.zharinov.util.ConnectionManager;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +38,17 @@ public class DirectorDao implements Dao<Integer, Director> {
             """;
 
     @Override
+    @SneakyThrows
     public List<Director> findAll() {
-        return List.of();
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_ALL_DIRECTORS)) {
+            var resultSet = preparedStatement.executeQuery();
+            List<Director> directors = new ArrayList<>();
+            while (resultSet.next()) {
+                directors.add(builddirector(resultSet));
+            }
+            return directors;
+        }
     }
 
     @Override

@@ -27,15 +27,6 @@
             </label>
         </div>
         <br>
-        <div>
-            <label for="role">
-                <select name="role" id="role">
-                    <c:forEach var="role" items="${requestScope.roles}">
-                        <option value="${role}">${role}</option>
-                    </c:forEach>
-                </select>
-            </label>
-        </div>
         <br>
         <button type="submit">Сохранить</button>
 

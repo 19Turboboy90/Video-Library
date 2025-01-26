@@ -1,9 +1,10 @@
-package ru.zharinov.mapper;
+package ru.zharinov.mapper.user;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.CreateUserDto;
+import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.entity.Role;
 import ru.zharinov.entity.User;
+import ru.zharinov.mapper.Mapper;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -17,7 +18,7 @@ public class CreateUserMapper implements Mapper<CreateUserDto, User> {
                 .name(object.getName())
                 .email(object.getEmail())
                 .password(object.getPassword())
-                .role(Role.valueOf(object.getRole()))
+                .role(Role.USER)
                 .build();
     }
 

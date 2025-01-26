@@ -1,19 +1,21 @@
-package ru.zharinov.mapper;
+package ru.zharinov.mapper.actor;
 
 import lombok.NoArgsConstructor;
-import ru.zharinov.dto.DirectorDto;
-import ru.zharinov.entity.Director;
+import ru.zharinov.dto.actor.ActorDto;
+import ru.zharinov.entity.Actor;
+import ru.zharinov.mapper.Mapper;
+import ru.zharinov.mapper.movie.MovieMapper;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class DirectorWithMoviesMapper implements Mapper<Director, DirectorDto> {
-    private static final DirectorWithMoviesMapper INSTANCE = new DirectorWithMoviesMapper();
+public class ActorWithMoviesMapper implements Mapper<Actor, ActorDto> {
+    private static final ActorWithMoviesMapper INSTANCE = new ActorWithMoviesMapper();
     private final MovieMapper movieMapper = MovieMapper.getInstance();
 
     @Override
-    public DirectorDto mapper(Director object) {
-        return DirectorDto.builder()
+    public ActorDto mapper(Actor object) {
+        return ActorDto.builder()
                 .id(object.getId())
                 .name(object.getName())
                 .dateOfBirthday(object.getDateOfBirthday())
@@ -21,7 +23,7 @@ public class DirectorWithMoviesMapper implements Mapper<Director, DirectorDto> {
                 .build();
     }
 
-    public static DirectorWithMoviesMapper getInstance() {
+    public static ActorWithMoviesMapper getInstance() {
         return INSTANCE;
     }
 }

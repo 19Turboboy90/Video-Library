@@ -4,11 +4,11 @@ import lombok.NoArgsConstructor;
 import ru.zharinov.dao.ActorDao;
 import ru.zharinov.dao.DirectorDao;
 import ru.zharinov.dao.MovieDao;
-import ru.zharinov.dto.MovieAllInfoDto;
-import ru.zharinov.dto.MovieInfoDto;
+import ru.zharinov.dto.movie.MovieAllInfoDto;
+import ru.zharinov.dto.movie.MovieInfoDto;
 import ru.zharinov.entity.Director;
-import ru.zharinov.mapper.MovieAllInfoMapper;
-import ru.zharinov.mapper.MovieMapper;
+import ru.zharinov.mapper.movie.MovieAllInfoMapper;
+import ru.zharinov.mapper.movie.MovieMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +25,9 @@ public class MovieService {
     private final MovieAllInfoMapper movieAllInfoMapper = MovieAllInfoMapper.getInstance();
 
 
-//    public List<MovieInfoDto> findAllMovies() {
-//        return movieDao.findAll().stream().map(movieMapper::mapper).toList();
-//    }
+    public List<MovieInfoDto> findAllMovies() {
+        return movieDao.findAll().stream().map(movieMapper::mapper).toList();
+    }
 
     public List<MovieInfoDto> findAllMoviesByDate(Integer fromDate, Integer toFrom) {
         return movieDao.findAllMoviesByDate(fromDate, toFrom).stream().map(movieMapper::mapper).toList();

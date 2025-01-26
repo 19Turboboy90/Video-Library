@@ -1,37 +1,39 @@
-package ru.zharinov.servlet;
+package ru.zharinov.servlet.movie;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.zharinov.service.DirectorService;
+import ru.zharinov.service.MovieService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 import ru.zharinov.validation.ErrorInfo;
 
 import java.io.IOException;
 
-@WebServlet(UrlPath.DIRECTOR)
-public class DirectorInfoServlet extends HttpServlet {
-    private final DirectorService directorService = DirectorService.getInstance();
+@WebServlet(UrlPath.MOVIE)
+public class MovieAllInfoServlet extends HttpServlet {
+    private final MovieService movieService = MovieService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var directorId = Integer.parseInt(req.getParameter("directorId"));
+        var parameter = req.getParameter("movieId");
+        int movieId = Integer.parseInt(parameter);
 
-        directorService.findDirectorById(directorId).ifPresentOrElse(
-                director -> {
-                    req.setAttribute("director", director);
+        movieService.findMovieById(movieId).ifPresentOrElse(
+                movie -> {
+                    req.setAttribute("movie", movie);
                     try {
-                        req.getRequestDispatcher(JspHelper.prefixPath("director-info")).forward(req, resp);
+                        req.getRequestDispatcher(JspHelper.prefixPath("movie-all-info")).forward(req, resp);
                     } catch (ServletException | IOException e) {
                         throw new RuntimeException(e);
                     }
                 },
                 () -> {
-                    var errorInTheId = ErrorInfo.of("Error in the ID", "Not found id = " + directorId);
+                    var errorInTheId = ErrorInfo.of("Error in the ID", "Not found id = " + movieId);
                     req.setAttribute("errorMessage", errorInTheId);
+
                     try {
                         req.getRequestDispatcher(JspHelper.prefixPath("errorPage")).forward(req, resp);
                     } catch (ServletException | IOException e) {
