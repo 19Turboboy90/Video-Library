@@ -7,8 +7,8 @@
 <body>
 <%@ include file="header.jsp" %>
 <div>
-    <h2>Сохранить режиссера:</h2>
-    <form action="${requestScope.request.contextPath}/admin/add-director" method="post">
+    <h2>Сохранить актера:</h2>
+    <form action="${requestScope.request.contextPath}/admin/add-actor" method="post">
         <div>
             <label for="name">
                 <input type="text" name="name" id="name" placeholder="Введите имя" required>
@@ -22,7 +22,6 @@
         </div>
         <br>
         <button type="submit">Сохранить</button>
-
 
         <c:if test="${not empty requestScope.errors}">
             <div style="color: red">

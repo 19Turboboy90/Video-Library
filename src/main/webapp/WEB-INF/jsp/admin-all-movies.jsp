@@ -9,14 +9,12 @@
 <div>
     <h1>Список фильмов:</h1>
     <div>
-        <%--        <form action="movies" method="get">--%>
-        <%--            <label for="fromDate">Поиск от</label>--%>
-        <%--            <input type="text" id="fromDate" name="fromDate" placeholder="ввести только год">--%>
-        <%--            <label for="toDate">Поиск до</label>--%>
-        <%--            <input type="text" id="toDate" name="toDate" placeholder="ввести только год">--%>
-        <%--            <button type="submit">Отфильтровать</button>--%>
-        <%--            <button type="submit">Отмена</button>--%>
-        <%--        </form>--%>
+        <form action="${pageContext.request.contextPath}/admin/movies-page" method="get">
+            <label for="prefix">Поиск фильма</label>
+            <input type="text" id="prefix" name="prefix" placeholder="ввести название фильма">
+            <button type="submit">Отфильтровать</button>
+            <button type="submit">Отмена</button>
+        </form>
     </div>
     <c:forEach var="movie" items="${requestScope.movies}">
         <li>
@@ -27,10 +25,17 @@
     <div>
         <div style="display: flex">
             <div style="margin-right: 10px">
-                <form action="admin" method="get">
+                <form action="${pageContext.request.contextPath}/admin/add-movie" method="get">
                     <button type="submit">Добавить фильм</button>
                 </form>
             </div>
+        </div>
+        <br>
+        <br>
+        <div>
+            <form action="${requestScope.request.contextPath}/admin" method="get">
+                <button type="submit">На главную страницу</button>
+            </form>
         </div>
     </div>
 </div>

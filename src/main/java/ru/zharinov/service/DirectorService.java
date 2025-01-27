@@ -55,4 +55,8 @@ public class DirectorService {
     public List<DirectorDto> findAllDirectors() {
         return directorDao.findAll().stream().map(directorMapper::mapper).toList();
     }
+
+    public List<DirectorDto> findDirectorsByPrefix(String prefix) {
+        return directorDao.finDirectorsByPrefix(prefix).stream().map(directorMapper::mapper).toList();
+    }
 }

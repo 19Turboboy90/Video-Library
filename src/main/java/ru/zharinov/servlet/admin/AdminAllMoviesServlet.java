@@ -17,7 +17,9 @@ public class AdminAllMoviesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("movies", movieService.findAllMovies());
+        var param = req.getParameter("prefix");
+        String prefix = param == null || param.isEmpty() ? "" : param;
+        req.setAttribute("movies", movieService.findMoviesByPrefix(prefix));
         req.getRequestDispatcher(JspHelper.prefixPath("admin-all-movies")).forward(req, resp);
     }
 }

@@ -24,6 +24,10 @@ public class DirectorDao implements Dao<Integer, Director> {
             FROM director d
             """;
 
+    private static final String FIND_DIRECTORS_BY_PREFIX = FIND_ALL_DIRECTORS + """
+            WHERE d.name LIKE ?;
+            """;
+
     private static final String FIND_DIRECTOR_BY_MOVIE_ID = FIND_ALL_DIRECTORS + """
             JOIN movie m ON d.id = m.director_id
             WHERE m.id = ?;
@@ -43,11 +47,17 @@ public class DirectorDao implements Dao<Integer, Director> {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ALL_DIRECTORS)) {
             var resultSet = preparedStatement.executeQuery();
-            List<Director> directors = new ArrayList<>();
-            while (resultSet.next()) {
-                directors.add(builddirector(resultSet));
-            }
-            return directors;
+            return getDirectors(resultSet);
+        }
+    }
+
+    @SneakyThrows
+    public List<Director> finDirectorsByPrefix(String prefix) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_DIRECTORS_BY_PREFIX)) {
+            preparedStatement.setObject(1, prefix + "%");
+            var resultSet = preparedStatement.executeQuery();
+            return getDirectors(resultSet);
         }
     }
 
@@ -97,6 +107,14 @@ public class DirectorDao implements Dao<Integer, Director> {
     @Override
     public boolean delete(Integer id) {
         return false;
+    }
+
+    private List<Director> getDirectors(ResultSet resultSet) throws SQLException {
+        List<Director> directors = new ArrayList<>();
+        while (resultSet.next()) {
+            directors.add(builddirector(resultSet));
+        }
+        return directors;
     }
 
     private Director builddirector(ResultSet resultSet) throws SQLException {

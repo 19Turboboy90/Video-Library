@@ -52,7 +52,7 @@
     <br>
     <br>
     <div>
-        <form action="movies" method="get">
+        <form action="${requestScope.request.contextPath}/movies" method="get">
             <button type="submit">На главную страницу</button>
         </form>
     </div>

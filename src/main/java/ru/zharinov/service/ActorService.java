@@ -41,6 +41,10 @@ public class ActorService {
         return actorDao.findAll().stream().map(actorMapper::mapper).toList();
     }
 
+    public List<ActorDto> findActorsByPrefix(String prefix) {
+        return actorDao.findActorsByPrefix(prefix).stream().map(actorMapper::mapper).toList();
+    }
+
     public Integer save(CreateActorDto createActorDto) {
         var valid = actorValidator.isValid(createActorDto);
         if (!valid.isValid()) {

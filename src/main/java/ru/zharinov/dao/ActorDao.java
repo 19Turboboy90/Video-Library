@@ -24,6 +24,10 @@ public class ActorDao implements Dao<Integer, Actor> {
             FROM actor a
             """;
 
+    private static final String FIND_ACTORS_BY_PREFIX = FIND_ALL_ACTORS + """
+            WHERE a.name LIKE ?;
+            """;
+
     private static final String FIND_ALL_ACTORS_BY_MOVIE_ID = FIND_ALL_ACTORS + """
                      LEFT JOIN actor_movie am ON a.id = am.actor_id
                      LEFT JOIN movie m ON am.movie_id = m.id
@@ -47,6 +51,15 @@ public class ActorDao implements Dao<Integer, Actor> {
     public List<Actor> findAll() {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ALL_ACTORS)) {
+            return getActors(preparedStatement);
+        }
+    }
+
+    @SneakyThrows
+    public List<Actor> findActorsByPrefix(String prefix) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_ACTORS_BY_PREFIX)) {
+            preparedStatement.setObject(1, prefix + "%");
             return getActors(preparedStatement);
         }
     }
@@ -104,7 +117,8 @@ public class ActorDao implements Dao<Integer, Actor> {
     @SneakyThrows
     private void saveActorToActorMovie(Integer actorId) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(SAVE_ACTOR_TO_ACTOR_MOVIE)) {
+             var preparedStatement =
+                     connection.prepareStatement(SAVE_ACTOR_TO_ACTOR_MOVIE, RETURN_GENERATED_KEYS)) {
             preparedStatement.setObject(1, actorId);
             preparedStatement.executeUpdate();
         }

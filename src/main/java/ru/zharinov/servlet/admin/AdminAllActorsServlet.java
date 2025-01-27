@@ -17,7 +17,9 @@ public class AdminAllActorsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("actors", actorService.findAllActor());
+        var param = req.getParameter("prefix");
+        String prefix = param == null || param.isEmpty() ? "" : param;
+        req.setAttribute("actors", actorService.findActorsByPrefix(prefix));
         req.getRequestDispatcher(JspHelper.prefixPath("admin-all-actors")).forward(req, resp);
     }
 }

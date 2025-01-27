@@ -6,6 +6,7 @@ import ru.zharinov.entity.Movie;
 import ru.zharinov.util.ConnectionManager;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ public class MovieDao implements Dao<Integer, Movie> {
                    m.country,
                    m.genre
             FROM movie m
+            """;
+
+    private static final String FIND_MOVIES_BY_PREFIX = FIND_ALL_MOVIES + """
+            WHERE m.name LIKE ?;
             """;
 
     private static final String FIND_ALL_MOVIES_BY_DATE = FIND_ALL_MOVIES + """
@@ -52,12 +57,16 @@ public class MovieDao implements Dao<Integer, Movie> {
     public List<Movie> findAll() {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(FIND_ALL_MOVIES)) {
-            var resultSet = preparedStatement.executeQuery();
-            List<Movie> movies = new ArrayList<>();
-            while (resultSet.next()) {
-                movies.add(buildMovie(resultSet));
-            }
-            return movies;
+            return getMovies(preparedStatement);
+        }
+    }
+
+    @SneakyThrows
+    public List<Movie> findMoviesByPrefix(String prefix) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_MOVIES_BY_PREFIX)) {
+            preparedStatement.setObject(1, prefix + "%");
+            return getMovies(preparedStatement);
         }
     }
 
@@ -67,12 +76,7 @@ public class MovieDao implements Dao<Integer, Movie> {
              var preparedStatement = connection.prepareStatement(FIND_ALL_MOVIES_BY_DATE)) {
             preparedStatement.setObject(1, fromDate);
             preparedStatement.setObject(2, toDate);
-            var resultSet = preparedStatement.executeQuery();
-            List<Movie> movies = new ArrayList<>();
-            while (resultSet.next()) {
-                movies.add(buildMovie(resultSet));
-            }
-            return movies;
+            return getMovies(preparedStatement);
         }
     }
 
@@ -104,12 +108,7 @@ public class MovieDao implements Dao<Integer, Movie> {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, actorId);
-            var resultSet = preparedStatement.executeQuery();
-            List<Movie> movies = new ArrayList<>();
-            while (resultSet.next()) {
-                movies.add(buildMovie(resultSet));
-            }
-            return movies;
+            return getMovies(preparedStatement);
         }
     }
 
@@ -126,6 +125,15 @@ public class MovieDao implements Dao<Integer, Movie> {
     @Override
     public boolean delete(Integer id) {
         return false;
+    }
+
+    private List<Movie> getMovies(PreparedStatement preparedStatement) throws SQLException {
+        var resultSet = preparedStatement.executeQuery();
+        List<Movie> movies = new ArrayList<>();
+        while (resultSet.next()) {
+            movies.add(buildMovie(resultSet));
+        }
+        return movies;
     }
 
     private Movie buildMovie(ResultSet resultSet) throws SQLException {

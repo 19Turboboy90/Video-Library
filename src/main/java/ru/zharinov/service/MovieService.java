@@ -33,6 +33,10 @@ public class MovieService {
         return movieDao.findAllMoviesByDate(fromDate, toFrom).stream().map(movieMapper::mapper).toList();
     }
 
+    public List<MovieInfoDto> findMoviesByPrefix(String prefix) {
+        return movieDao.findMoviesByPrefix(prefix).stream().map(movieMapper::mapper).toList();
+    }
+
     public Optional<MovieAllInfoDto> findMovieById(Integer movieId) {
         //Поиск режиссера по id фильма
         var directorByMovieId = directorDao.findDirectorByMovieId(movieId);

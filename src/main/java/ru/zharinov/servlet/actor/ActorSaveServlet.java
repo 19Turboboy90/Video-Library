@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.actor.CreateActorDto;
 import ru.zharinov.exception.CreateNotFoundException;
 import ru.zharinov.service.ActorService;
+import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class ActorSaveServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        req.getRequestDispatcher(JspHelper.prefixPath("actor-create")).forward(req, resp);
     }
 
     @Override

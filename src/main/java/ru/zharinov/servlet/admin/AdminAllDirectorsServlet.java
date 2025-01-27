@@ -17,7 +17,9 @@ public class AdminAllDirectorsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("directors", directorService.findAllDirectors());
+        var param = req.getParameter("prefix");
+        String prefix = param == null || param.isEmpty() ? "" : param;
+        req.setAttribute("directors", directorService.findDirectorsByPrefix(prefix));
         req.getRequestDispatcher(JspHelper.prefixPath("admin-all-directors")).forward(req, resp);
     }
 }
