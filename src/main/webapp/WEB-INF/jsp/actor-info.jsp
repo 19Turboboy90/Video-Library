@@ -19,8 +19,14 @@
     <br>
     <div>
         <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
-            <form action="admin/update-actor" method="get">
+            <form action="${requestScope.request.contextPath}/admin/add-actor" method="get" style="display: inline;">
+                <input type="hidden" name="actorId" value="${requestScope.actor.id}">
                 <button type="submit">Изменить актера</button>
+            </form>
+            <form action="${requestScope.request.contextPath}/admin/actor-delete" method="post"
+                  style="display: inline;">
+                <input type="hidden" name="actorId" value="${requestScope.actor.id}">
+                <button type="submit">Удалить актера</button>
             </form>
         </c:if>
     </div>

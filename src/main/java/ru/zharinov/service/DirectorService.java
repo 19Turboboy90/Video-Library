@@ -6,7 +6,7 @@ import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.dto.director.DirectorDto;
 import ru.zharinov.dto.director.DirectorWithMoviesDto;
-import ru.zharinov.exception.CreateNotFoundException;
+import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.director.CreateDirectorMapper;
 import ru.zharinov.mapper.director.DirectorMapper;
 import ru.zharinov.mapper.director.DirectorWithMoviesMapper;
@@ -41,7 +41,7 @@ public class DirectorService {
     public Integer save(CreateDirectorDto directorDto) {
         var valid = validation.isValid(directorDto);
         if (!valid.isValid()) {
-            throw new CreateNotFoundException(valid.getErrors());
+            throw new NotFoundException(valid.getErrors());
         }
         var director = createDirectorMapper.mapper(directorDto);
         directorDao.save(director);

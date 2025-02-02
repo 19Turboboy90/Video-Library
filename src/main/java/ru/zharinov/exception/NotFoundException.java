@@ -8,6 +8,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class CreateNotFoundException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
     private final List<ErrorInfo> errors;
 }

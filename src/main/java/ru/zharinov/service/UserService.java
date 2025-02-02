@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import ru.zharinov.dao.UserDao;
 import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.dto.user.UserDto;
-import ru.zharinov.exception.CreateNotFoundException;
+import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.user.CreateUserMapper;
 import ru.zharinov.mapper.user.UserMapper;
 import ru.zharinov.validation.UserValidation;
@@ -30,7 +30,7 @@ public class UserService {
     public Integer save(CreateUserDto userDto) {
         var valid = userValidation.isValid(userDto);
         if (!valid.isValid()) {
-            throw new CreateNotFoundException(valid.getErrors());
+            throw new NotFoundException(valid.getErrors());
         }
         var saveUser = creatUserMapper.mapper(userDto);
         var user = userDao.save(saveUser);

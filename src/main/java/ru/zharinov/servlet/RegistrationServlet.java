@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.entity.Role;
-import ru.zharinov.exception.CreateNotFoundException;
+import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.service.UserService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
@@ -36,7 +36,7 @@ public class RegistrationServlet extends HttpServlet {
         try {
             userService.save(userDto);
             resp.sendRedirect("/login");
-        } catch (CreateNotFoundException e) {
+        } catch (NotFoundException e) {
             req.setAttribute("errors", e.getErrors());
             doGet(req, resp);
         }

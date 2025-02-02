@@ -46,6 +46,15 @@ public class ActorDao implements Dao<Integer, Actor> {
             INSERT INTO actor_movie (actor_id) VALUES (?);
             """;
 
+    private static final String UPDATE_ACTOR = """
+            UPDATE actor SET name = ?, date_of_birth = ? WHERE id = ?;
+            """;
+
+    private static final String DELETE_ACTOR_BY_ID = """
+            DELETE FROM actor
+            WHERE actor.id = ?;
+            """;
+
     @Override
     @SneakyThrows
     public List<Actor> findAll() {
@@ -96,13 +105,25 @@ public class ActorDao implements Dao<Integer, Actor> {
     }
 
     @Override
+    @SneakyThrows
     public void update(Actor entity) {
-
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(UPDATE_ACTOR)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getDateOfBirthday());
+            preparedStatement.setObject(3, entity.getId());
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override
+    @SneakyThrows
     public boolean delete(Integer id) {
-        return false;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_ACTOR_BY_ID)) {
+            preparedStatement.setObject(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        }
     }
 
     @SneakyThrows
