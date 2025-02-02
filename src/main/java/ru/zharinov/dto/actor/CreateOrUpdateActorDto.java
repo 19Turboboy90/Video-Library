@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class UpdateActorDto {
+public class CreateOrUpdateActorDto {
     String id;
     String name;
     String dateOfBirthday;

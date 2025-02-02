@@ -5,8 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.zharinov.dto.actor.CreateActorDto;
-import ru.zharinov.dto.actor.UpdateActorDto;
+import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.service.ActorService;
 import ru.zharinov.util.JspHelper;
@@ -35,19 +34,11 @@ public class ActorSaveServlet extends HttpServlet {
         var birthday = req.getParameter("birthday");
 
         try {
-            if (id == null || id.isEmpty()) {
-                actorService.save(CreateActorDto.builder()
-                        .name(name)
-                        .dateOfBirthday(birthday)
-                        .build());
-
-            } else {
-                actorService.update(UpdateActorDto.builder()
-                        .id(id)
-                        .name(name)
-                        .dateOfBirthday(birthday)
-                        .build());
-            }
+            actorService.save(CreateOrUpdateActorDto.builder()
+                    .id(id)
+                    .name(name)
+                    .dateOfBirthday(birthday)
+                    .build());
             resp.sendRedirect(UrlPath.ADMIN_INFO_ACTORS);
         } catch (NotFoundException e) {
             req.setAttribute("errors", e.getErrors());

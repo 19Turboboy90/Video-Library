@@ -4,13 +4,11 @@ import lombok.NoArgsConstructor;
 import ru.zharinov.dao.ActorDao;
 import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.actor.ActorDto;
-import ru.zharinov.dto.actor.CreateActorDto;
-import ru.zharinov.dto.actor.UpdateActorDto;
+import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.actor.ActorMapper;
 import ru.zharinov.mapper.actor.ActorWithMoviesMapper;
 import ru.zharinov.mapper.actor.CreateActorMapper;
-import ru.zharinov.mapper.actor.UpdateActorMapper;
 import ru.zharinov.validation.ActorValidator;
 
 import java.util.List;
@@ -27,7 +25,6 @@ public class ActorService {
     private final ActorWithMoviesMapper actorWithMoviesMapper = ActorWithMoviesMapper.getInstance();
     private final CreateActorMapper createActorMapper = CreateActorMapper.getInstance();
     private final ActorMapper actorMapper = ActorMapper.getInstance();
-    private final UpdateActorMapper updateActorMapper = UpdateActorMapper.getInstance();
 
     public Optional<ActorDto> findActorById(Integer actorId) {
         var actor = actorDao.findById(actorId);
@@ -48,18 +45,17 @@ public class ActorService {
         return actorDao.findActorsByPrefix(prefix).stream().map(actorMapper::mapper).toList();
     }
 
-    public Integer save(CreateActorDto createActorDto) {
+    public void save(CreateOrUpdateActorDto createActorDto) {
         var valid = actorValidator.isValid(createActorDto);
         if (!valid.isValid()) {
             throw new NotFoundException(valid.getErrors());
         }
-        var actor = createActorMapper.mapper(createActorDto);
-        actorDao.save(actor);
-        return actor.getId();
-    }
-
-    public void update(UpdateActorDto actorDto) {
-        actorDao.update(updateActorMapper.mapper(actorDto));
+        if (createActorDto.getId() == null || createActorDto.getId().isEmpty()) {
+            var actor = createActorMapper.mapper(createActorDto);
+            actorDao.save(actor);
+        } else {
+            actorDao.update(createActorMapper.mapper(createActorDto));
+        }
     }
 
     public void delete(Integer actorId) {
