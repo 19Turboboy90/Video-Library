@@ -7,8 +7,7 @@
 <body>
 <%@ include file="header.jsp" %>
 <div>
-    <h2>${requestScope.actor != null ? (requestScope.actor.id != null ? "Обновить актера:" : "Сохранить актера:") : "Сохранить актера:"}</h2>
-
+    <h2>${(requestScope.actor != null && requestScope.actor.id != null) ? "Обновить актера:" : "Сохранить актера:"}</h2>
     <form action="${requestScope.request.contextPath}/admin/add-actor" method="post">
         <div>
             <input type="hidden" name="actorId" value="${requestScope.actor != null ? requestScope.actor.id : ''}">
@@ -45,7 +44,7 @@
 <br>
 <br>
 <div>
-    <form action="${requestScope.request.contextPath}/movies" method="get">
+    <form action="${requestScope.request.contextPath}/admin" method="get">
         <button type="submit">На главную страницу</button>
     </form>
 </div>

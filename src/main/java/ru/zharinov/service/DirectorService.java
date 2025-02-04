@@ -7,7 +7,7 @@ import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.dto.director.DirectorDto;
 import ru.zharinov.dto.director.DirectorWithMoviesDto;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.mapper.director.CreateDirectorMapper;
+import ru.zharinov.mapper.director.CreateOrUpdateDirectorMapper;
 import ru.zharinov.mapper.director.DirectorMapper;
 import ru.zharinov.mapper.director.DirectorWithMoviesMapper;
 import ru.zharinov.validation.DirectorValidation;
@@ -23,29 +23,31 @@ public class DirectorService {
     private final DirectorDao directorDao = DirectorDao.getInstance();
     private final MovieDao movieDao = MovieDao.getInstance();
     private final DirectorWithMoviesMapper directorWithMoviesMapper = DirectorWithMoviesMapper.getInstance();
-    private final CreateDirectorMapper createDirectorMapper = CreateDirectorMapper.getInstance();
+    private final CreateOrUpdateDirectorMapper createOrUpdateDirectorMapper = CreateOrUpdateDirectorMapper.getInstance();
     private final DirectorMapper directorMapper = DirectorMapper.getInstance();
     private final DirectorValidation validation = DirectorValidation.getInstance();
 
     public Optional<DirectorWithMoviesDto> findDirectorById(Integer directorId) {
-        var directorByMovieId = directorDao.findDirectorByMovieId(directorId);
+        var directorByMovieId = directorDao.findById(directorId);
         if (directorByMovieId.isPresent()) {
             var allMoviesByDirectorId = movieDao.findAllMoviesByDirectorId(directorId);
             directorByMovieId.get().setMovies(allMoviesByDirectorId);
         } else {
-            throw new RuntimeException("ID is not found = " + directorId);
+            throw new RuntimeException("The movie wasn't found by directorId = " + directorId);
         }
         return directorByMovieId.map(directorWithMoviesMapper::mapper);
     }
 
-    public Integer save(CreateDirectorDto directorDto) {
+    public void save(CreateDirectorDto directorDto) {
         var valid = validation.isValid(directorDto);
         if (!valid.isValid()) {
             throw new NotFoundException(valid.getErrors());
         }
-        var director = createDirectorMapper.mapper(directorDto);
-        directorDao.save(director);
-        return director.getId();
+        if (directorDto.getId() == null || directorDto.getId().isBlank()) {
+            directorDao.save(createOrUpdateDirectorMapper.mapper(directorDto));
+        } else {
+            directorDao.update(createOrUpdateDirectorMapper.mapper(directorDto));
+        }
     }
 
     public static DirectorService getInstance() {
@@ -58,5 +60,9 @@ public class DirectorService {
 
     public List<DirectorDto> findDirectorsByPrefix(String prefix) {
         return directorDao.finDirectorsByPrefix(prefix).stream().map(directorMapper::mapper).toList();
+    }
+
+    public void delete(Integer directorId) {
+        directorDao.delete(directorId);
     }
 }

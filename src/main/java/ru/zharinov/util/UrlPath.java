@@ -20,4 +20,5 @@ public class UrlPath {
     public static final String ADMIN_INFO_DIRECTORS = "/admin/directors-page";
     public static final String ADMIN_INFO_USERS = "/admin/users-page";
     public static final String ADMIN_DELETE_ACTOR = "/admin/actor-delete";
+    public static final String ADMIN_DELETE_DIRECTOR = "/admin/director-delete";
 }

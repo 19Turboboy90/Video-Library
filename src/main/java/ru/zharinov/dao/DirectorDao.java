@@ -41,6 +41,14 @@ public class DirectorDao implements Dao<Integer, Director> {
             INSERT INTO director (name, date_of_birth) VALUES (?, ?);
             """;
 
+    private static final String UPDATE_DIRECTOR = """
+            UPDATE director SET name = ?, date_of_birth = ? WHERE id = ?;
+            """;
+
+    private static final String DELETE_DIRECTOR = """
+            DELETE FROM director WHERE id = ?;
+            """;
+
     @Override
     @SneakyThrows
     public List<Director> findAll() {
@@ -100,13 +108,25 @@ public class DirectorDao implements Dao<Integer, Director> {
     }
 
     @Override
+    @SneakyThrows
     public void update(Director entity) {
-
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(UPDATE_DIRECTOR)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getDateOfBirthday());
+            preparedStatement.setObject(3, entity.getId());
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override
+    @SneakyThrows
     public boolean delete(Integer id) {
-        return false;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_DIRECTOR)) {
+            preparedStatement.setObject(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        }
     }
 
     private List<Director> getDirectors(ResultSet resultSet) throws SQLException {

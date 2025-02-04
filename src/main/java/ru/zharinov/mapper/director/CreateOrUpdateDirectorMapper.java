@@ -9,19 +9,19 @@ import ru.zharinov.util.DateFormatter;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class CreateDirectorMapper implements Mapper<CreateDirectorDto, Director> {
-    public static final CreateDirectorMapper INSTANCE = new CreateDirectorMapper();
-
+public class CreateOrUpdateDirectorMapper implements Mapper<CreateDirectorDto, Director> {
+    private static final CreateOrUpdateDirectorMapper INSTANCE = new CreateOrUpdateDirectorMapper();
 
     @Override
     public Director mapper(CreateDirectorDto object) {
         return Director.builder()
+                .id(object.getId().isEmpty() ? null : Integer.parseInt(object.getId()))
                 .name(object.getName())
                 .dateOfBirthday(DateFormatter.format(object.getDateOfBirthday()))
                 .build();
     }
 
-    public static CreateDirectorMapper getInstance() {
+    public static CreateOrUpdateDirectorMapper getInstance() {
         return INSTANCE;
     }
 }

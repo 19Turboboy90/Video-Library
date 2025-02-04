@@ -8,7 +8,7 @@ import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.actor.ActorMapper;
 import ru.zharinov.mapper.actor.ActorWithMoviesMapper;
-import ru.zharinov.mapper.actor.CreateActorMapper;
+import ru.zharinov.mapper.actor.CreateOrUpdateActorMapper;
 import ru.zharinov.validation.ActorValidator;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class ActorService {
     private final MovieDao movieDao = MovieDao.getInstance();
     private final ActorValidator actorValidator = ActorValidator.getInstance();
     private final ActorWithMoviesMapper actorWithMoviesMapper = ActorWithMoviesMapper.getInstance();
-    private final CreateActorMapper createActorMapper = CreateActorMapper.getInstance();
+    private final CreateOrUpdateActorMapper createOrUpdateActorMapper = CreateOrUpdateActorMapper.getInstance();
     private final ActorMapper actorMapper = ActorMapper.getInstance();
 
     public Optional<ActorDto> findActorById(Integer actorId) {
@@ -50,11 +50,10 @@ public class ActorService {
         if (!valid.isValid()) {
             throw new NotFoundException(valid.getErrors());
         }
-        if (createActorDto.getId() == null || createActorDto.getId().isEmpty()) {
-            var actor = createActorMapper.mapper(createActorDto);
-            actorDao.save(actor);
+        if (createActorDto.getId() == null || createActorDto.getId().isBlank()) {
+            actorDao.save(createOrUpdateActorMapper.mapper(createActorDto));
         } else {
-            actorDao.update(createActorMapper.mapper(createActorDto));
+            actorDao.update(createOrUpdateActorMapper.mapper(createActorDto));
         }
     }
 

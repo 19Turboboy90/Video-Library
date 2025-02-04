@@ -6,6 +6,7 @@ import lombok.Value;
 @Value
 @Builder
 public class CreateDirectorDto {
+    String id;
     String name;
     String dateOfBirthday;
 }

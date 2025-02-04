@@ -9,19 +9,19 @@ import ru.zharinov.util.DateFormatter;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class CreateActorMapper implements Mapper<CreateOrUpdateActorDto, Actor> {
-    private static final CreateActorMapper INSTANCE = new CreateActorMapper();
+public class CreateOrUpdateActorMapper implements Mapper<CreateOrUpdateActorDto, Actor> {
+    private static final CreateOrUpdateActorMapper INSTANCE = new CreateOrUpdateActorMapper();
 
     @Override
     public Actor mapper(CreateOrUpdateActorDto object) {
         return Actor.builder()
-                .id(Integer.parseInt(object.getId()))
+                .id(object.getId().isEmpty() ? null : Integer.parseInt(object.getId()))
                 .name(object.getName())
                 .dateOfBirthday(DateFormatter.format(object.getDateOfBirthday()))
                 .build();
     }
 
-    public static CreateActorMapper getInstance() {
+    public static CreateOrUpdateActorMapper getInstance() {
         return INSTANCE;
     }
 }

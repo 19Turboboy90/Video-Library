@@ -19,8 +19,14 @@
     <br>
     <div>
         <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
-            <form action="admin/update-director" method="get">
+            <form action="${requestScope.request.contextPath}/admin/add-director" method="get" style="display: inline;">
+                <input type="hidden" name="directorId" value="${requestScope.director.id}">
                 <button type="submit">Изменить режиссера</button>
+            </form>
+            <form action="${requestScope.request.contextPath}/admin/director-delete" method="post"
+                  style="display: inline;">
+                <input type="hidden" name="directorId" value="${requestScope.director.id}">
+                <button type="submit">Удалить режиссера</button>
             </form>
         </c:if>
     </div>
@@ -32,6 +38,7 @@
                     <a href="${pageContext.request.contextPath}/movie?movieId=${movie.id}">${movie.description}</a>
                 </li>
             </c:forEach>
+
         </div>
     </div>
     <br>
