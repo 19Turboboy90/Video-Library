@@ -9,6 +9,7 @@ import ru.zharinov.util.ConnectionManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,15 @@ public class UserDao implements Dao<Integer, User> {
             """;
 
     private static final String SAVE_USER = """
-            INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)
+            INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?);
+            """;
+
+    private static final String FIND_USER_BY_ID = FIND_ALL_USERS + """
+            WHERE u.id = ?;
+            """;
+
+    private static final String FIND_USERS_BY_PREFIX = FIND_ALL_USERS + """
+            WHERE u.name LIKE ?;
             """;
 
 
@@ -41,9 +50,33 @@ public class UserDao implements Dao<Integer, User> {
         return List.of();
     }
 
+    @SneakyThrows
+    public List<User> findAllUsersByPrefix(String prefix) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_USERS_BY_PREFIX)) {
+            preparedStatement.setObject(1, prefix + "%");
+            var resultSet = preparedStatement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(buildUser(resultSet));
+            }
+            return users;
+        }
+    }
+
     @Override
+    @SneakyThrows
     public Optional<User> findById(Integer id) {
-        return Optional.empty();
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(FIND_USER_BY_ID);) {
+            preparedStatement.setObject(1, id);
+            var resultSet = preparedStatement.executeQuery();
+            User user = null;
+            if (resultSet.next()) {
+                user = buildUser(resultSet);
+            }
+            return Optional.ofNullable(user);
+        }
     }
 
     @SneakyThrows

@@ -10,9 +10,9 @@ import ru.zharinov.mapper.actor.ActorMapper;
 import ru.zharinov.mapper.actor.ActorWithMoviesMapper;
 import ru.zharinov.mapper.actor.CreateOrUpdateActorMapper;
 import ru.zharinov.validation.ActorValidator;
+import ru.zharinov.validation.EntityValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -26,15 +26,16 @@ public class ActorService {
     private final CreateOrUpdateActorMapper createOrUpdateActorMapper = CreateOrUpdateActorMapper.getInstance();
     private final ActorMapper actorMapper = ActorMapper.getInstance();
 
-    public Optional<ActorDto> findActorById(Integer actorId) {
-        var actor = actorDao.findById(actorId);
-        if (actor.isPresent()) {
-            var allMovieByActorId = movieDao.findAllMovieByActorId(actor.get().getId());
-            actor.get().setMovies(allMovieByActorId);
-        } else {
-            throw new RuntimeException("ID is not found = " + actorId);
-        }
-        return actor.map(actorWithMoviesMapper::mapper);
+
+    public ActorDto findActorById(Integer actorId) {
+        EntityValidator.validateId(actorId, "actor");
+        var actorOptional = actorDao.findById(actorId);
+        EntityValidator.validateEntityExists(actorOptional, actorId, "actor");
+        var actor = actorOptional.get();
+        var allMovieByActorId = movieDao.findAllMovieByActorId(actor.getId());
+        actor.setMovies(allMovieByActorId);
+
+        return actorWithMoviesMapper.mapper(actor);
     }
 
     public List<ActorDto> findAllActor() {

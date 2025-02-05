@@ -21,8 +21,8 @@ public class ActorSaveServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var actorId = req.getParameter("actorId");
         if (actorId != null && !actorId.isEmpty()) {
-            actorService.findActorById(Integer.parseInt(actorId))
-                    .ifPresent(actor -> req.setAttribute("actor", actor));
+            var actor = actorService.findActorById(Integer.parseInt(actorId));
+            req.setAttribute("actor", actor);
         }
         req.getRequestDispatcher(JspHelper.prefixPath("actor-create")).forward(req, resp);
     }

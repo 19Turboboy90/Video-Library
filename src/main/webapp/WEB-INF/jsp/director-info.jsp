@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Актер</title>
+    <title>Режиссер</title>
 </head>
 <body>
 <%@ include file="header.jsp" %>

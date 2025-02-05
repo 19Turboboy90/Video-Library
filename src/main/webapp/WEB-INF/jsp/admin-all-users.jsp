@@ -2,31 +2,31 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Список фильмов</title>
+    <title>Список пользователей</title>
 </head>
-<%@ include file="header.jsp" %>
 <body>
+<%@ include file="header.jsp" %>
 <div>
-    <h1>Список фильмов:</h1>
+    <h1>Список пользователей:</h1>
     <div>
-        <form action="${pageContext.request.contextPath}/admin/movies-page" method="get">
-            <label for="prefix">Поиск фильма</label>
-            <input type="text" id="prefix" name="prefix" placeholder="ввести название фильма">
+        <form action="${pageContext.request.contextPath}/admin/users-page" method="get">
+            <label for="prefix">Поиск пользователя</label>
+            <input type="text" id="prefix" name="prefix" placeholder="ввести имя пользователя">
             <button type="submit">Отфильтровать</button>
             <button type="submit">Отмена</button>
         </form>
     </div>
-    <c:forEach var="movie" items="${requestScope.movies}">
+    <c:forEach var="user" items="${requestScope.users}">
         <li>
-            <a href="${pageContext.request.contextPath}/movie?movieId=${movie.id}">${movie.description}</a>
+            <a href="${pageContext.request.contextPath}/user?userId=${user.id}">${user.name}</a>
         </li>
     </c:forEach>
     <br>
     <div>
         <div style="display: flex">
             <div style="margin-right: 10px">
-                <form action="${pageContext.request.contextPath}/admin/add-movie" method="get">
-                    <button type="submit">Добавить фильм</button>
+                <form action="${pageContext.request.contextPath}/admin/user-add" method="get">
+                    <button type="submit">Добавить пользователя</button>
                 </form>
             </div>
         </div>
