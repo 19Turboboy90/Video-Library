@@ -1,41 +1,48 @@
 package ru.zharinov.service;
 
-import lombok.NoArgsConstructor;
 import ru.zharinov.dao.DirectorDao;
-import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.dto.director.DirectorDto;
 import ru.zharinov.dto.director.DirectorWithMoviesDto;
+import ru.zharinov.entity.Director;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.director.CreateOrUpdateDirectorMapper;
 import ru.zharinov.mapper.director.DirectorMapper;
 import ru.zharinov.mapper.director.DirectorWithMoviesMapper;
 import ru.zharinov.validation.DirectorValidation;
+import ru.zharinov.validation.EntityValidator;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static lombok.AccessLevel.PRIVATE;
-
-@NoArgsConstructor(access = PRIVATE)
 public class DirectorService {
-    private static final DirectorService INSTANCE = new DirectorService();
+    private final FactoryService factoryService;
     private final DirectorDao directorDao = DirectorDao.getInstance();
-    private final MovieDao movieDao = MovieDao.getInstance();
     private final DirectorWithMoviesMapper directorWithMoviesMapper = DirectorWithMoviesMapper.getInstance();
     private final CreateOrUpdateDirectorMapper createOrUpdateDirectorMapper = CreateOrUpdateDirectorMapper.getInstance();
     private final DirectorMapper directorMapper = DirectorMapper.getInstance();
     private final DirectorValidation validation = DirectorValidation.getInstance();
 
+    public DirectorService(FactoryService factoryService) {
+        this.factoryService = factoryService;
+    }
+
     public Optional<DirectorWithMoviesDto> findDirectorById(Integer directorId) {
+        EntityValidator.validateId(directorId, "director");
         var directorByMovieId = directorDao.findById(directorId);
-        if (directorByMovieId.isPresent()) {
-            var allMoviesByDirectorId = movieDao.findAllMoviesByDirectorId(directorId);
-            directorByMovieId.get().setMovies(allMoviesByDirectorId);
-        } else {
-            throw new RuntimeException("The movie wasn't found by directorId = " + directorId);
-        }
+        EntityValidator.validateEntityExists(directorByMovieId, directorId, "director");
+        var allMoviesByDirectorId = factoryService.getMovieService().findAllMoviesByDirectorId(directorId);
+        directorByMovieId.ifPresent(d -> d.setMovies(allMoviesByDirectorId));
+
         return directorByMovieId.map(directorWithMoviesMapper::mapper);
+    }
+
+    public Optional<Director> findDirectorByMovieId(Integer movieId) {
+        EntityValidator.validateId(movieId, "movie");
+        var directorByMovieId = directorDao.findDirectorByMovieId(movieId);
+        EntityValidator.validateEntityExists(directorByMovieId, movieId, "director");
+        return directorByMovieId;
     }
 
     public void save(CreateDirectorDto directorDto) {
@@ -50,16 +57,14 @@ public class DirectorService {
         }
     }
 
-    public static DirectorService getInstance() {
-        return INSTANCE;
-    }
-
     public List<DirectorDto> findAllDirectors() {
-        return directorDao.findAll().stream().map(directorMapper::mapper).toList();
+        return Optional.of(directorDao.findAll().stream().map(directorMapper::mapper).toList())
+                .orElse(Collections.emptyList());
     }
 
     public List<DirectorDto> findDirectorsByPrefix(String prefix) {
-        return directorDao.finDirectorsByPrefix(prefix).stream().map(directorMapper::mapper).toList();
+        var param = EntityValidator.validatorPrefix(prefix);
+        return directorDao.finDirectorsByPrefix(param).stream().map(directorMapper::mapper).toList();
     }
 
     public void delete(Integer directorId) {

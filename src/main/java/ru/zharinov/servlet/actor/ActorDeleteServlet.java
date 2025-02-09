@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.ActorService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -14,7 +14,8 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.ADMIN_DELETE_ACTOR)
 public class ActorDeleteServlet extends HttpServlet {
-    private final ActorService actorService = ActorService.getInstance();
+
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,7 +28,7 @@ public class ActorDeleteServlet extends HttpServlet {
 
         try {
             if (actorId != null && !actorId.isEmpty()) {
-                actorService.delete(Integer.parseInt(actorId));
+                factoryService.getActorService().delete(Integer.parseInt(actorId));
             }
             resp.sendRedirect(UrlPath.ADMIN_INFO_ACTORS);
         } catch (NotFoundException e) {

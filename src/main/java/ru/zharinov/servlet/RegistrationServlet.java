@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
 
         try {
             userService.save(userDto);
-            resp.sendRedirect("/login");
+            resp.sendRedirect(UrlPath.LOGIN);
         } catch (NotFoundException e) {
             req.setAttribute("errors", e.getErrors());
             doGet(req, resp);

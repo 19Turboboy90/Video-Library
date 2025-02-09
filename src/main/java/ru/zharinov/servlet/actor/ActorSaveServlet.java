@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.ActorService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -15,14 +15,14 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.SAVE_ACTOR)
 public class ActorSaveServlet extends HttpServlet {
-    private final ActorService actorService = ActorService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var actorId = req.getParameter("actorId");
         if (actorId != null && !actorId.isEmpty()) {
-            var actor = actorService.findActorById(Integer.parseInt(actorId));
-            req.setAttribute("actor", actor);
+            factoryService.getActorService().findActorById(Integer.parseInt(actorId))
+                    .ifPresent(actor -> req.setAttribute("actor", actor));
         }
         req.getRequestDispatcher(JspHelper.prefixPath("actor-create")).forward(req, resp);
     }
@@ -34,7 +34,7 @@ public class ActorSaveServlet extends HttpServlet {
         var birthday = req.getParameter("birthday");
 
         try {
-            actorService.save(CreateOrUpdateActorDto.builder()
+            factoryService.getActorService().save(CreateOrUpdateActorDto.builder()
                     .id(id)
                     .name(name)
                     .dateOfBirthday(birthday)

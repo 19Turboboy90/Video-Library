@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.DirectorService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.ADMIN_DELETE_DIRECTOR)
 public class DirectorDeleteServlet extends HttpServlet {
-    private final DirectorService directorService = DirectorService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,7 +27,7 @@ public class DirectorDeleteServlet extends HttpServlet {
 
         try {
             if (directorId != null && !directorId.isEmpty()) {
-                directorService.delete(Integer.parseInt(directorId));
+                factoryService.getDirectorService().delete(Integer.parseInt(directorId));
             }
             resp.sendRedirect(UrlPath.ADMIN_INFO_DIRECTORS);
         } catch (NotFoundException e) {

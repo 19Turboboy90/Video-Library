@@ -23,4 +23,8 @@ public class EntityValidator {
             );
         }
     }
+
+    public static String validatorPrefix(String param) {
+        return param == null || param.isEmpty() ? "" : param;
+    }
 }

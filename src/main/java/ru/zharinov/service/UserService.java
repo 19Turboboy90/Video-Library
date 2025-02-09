@@ -14,6 +14,7 @@ import ru.zharinov.validation.UserValidation;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -40,19 +41,20 @@ public class UserService {
     }
 
     public List<UserDto> findAllUsers() {
-        return userDao.findAll().stream().map(userMapper::mapper).toList();
+        return Optional.of(userDao.findAll().stream().map(userMapper::mapper).toList()).orElse(emptyList());
     }
 
-    public UserDto findById(Integer userId) {
+    public Optional<UserDto> findUserById(Integer userId) {
         EntityValidator.validateId(userId, "user");
-        var userOptional = userDao.findById(userId);
-        EntityValidator.validateEntityExists(userOptional, userId, "user");
-        var user = userOptional.get();
-        return userMapper.mapper(user);
+        var user = userDao.findById(userId);
+        EntityValidator.validateEntityExists(user, userId, "user");
+        return user.map(userMapper::mapper);
     }
 
     public List<UserDto> findAllUsersByPrefix(String prefix) {
-        return userDao.findAllUsersByPrefix(prefix).stream().map(userMapper::mapper).toList();
+        var param = EntityValidator.validatorPrefix(prefix);
+        return Optional.of(userDao.findAllUsersByPrefix(param).stream().map(userMapper::mapper).toList())
+                .orElse(emptyList());
     }
 
     public static UserService getInstance() {

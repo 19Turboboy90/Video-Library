@@ -1,10 +1,9 @@
 package ru.zharinov.service;
 
-import lombok.NoArgsConstructor;
 import ru.zharinov.dao.ActorDao;
-import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.actor.ActorDto;
 import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
+import ru.zharinov.entity.Actor;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.actor.ActorMapper;
 import ru.zharinov.mapper.actor.ActorWithMoviesMapper;
@@ -12,38 +11,45 @@ import ru.zharinov.mapper.actor.CreateOrUpdateActorMapper;
 import ru.zharinov.validation.ActorValidator;
 import ru.zharinov.validation.EntityValidator;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class ActorService {
-    private static final ActorService INSTANCE = new ActorService();
+    private final FactoryService factoryService;
     private final ActorDao actorDao = ActorDao.getInstance();
-    private final MovieDao movieDao = MovieDao.getInstance();
     private final ActorValidator actorValidator = ActorValidator.getInstance();
     private final ActorWithMoviesMapper actorWithMoviesMapper = ActorWithMoviesMapper.getInstance();
     private final CreateOrUpdateActorMapper createOrUpdateActorMapper = CreateOrUpdateActorMapper.getInstance();
     private final ActorMapper actorMapper = ActorMapper.getInstance();
 
+    public ActorService(FactoryService factoryService) {
+        this.factoryService = factoryService;
+    }
 
-    public ActorDto findActorById(Integer actorId) {
+    public Optional<ActorDto> findActorById(Integer actorId) {
         EntityValidator.validateId(actorId, "actor");
-        var actorOptional = actorDao.findById(actorId);
-        EntityValidator.validateEntityExists(actorOptional, actorId, "actor");
-        var actor = actorOptional.get();
-        var allMovieByActorId = movieDao.findAllMovieByActorId(actor.getId());
-        actor.setMovies(allMovieByActorId);
+        var actor = actorDao.findById(actorId);
+        EntityValidator.validateEntityExists(actor, actorId, "actor");
+        var allMovieByActorId = factoryService.getMovieService().findAllMovieByActorId(actorId);
+        actor.ifPresent(a -> a.setMovies(allMovieByActorId));
 
-        return actorWithMoviesMapper.mapper(actor);
+        return actor.map(actorWithMoviesMapper::mapper);
+    }
+
+    public List<Actor> findAllActorByMovieId(Integer movieId) {
+        EntityValidator.validateId(movieId, "movie");
+        return Optional.ofNullable(actorDao.findAllActorByMovieId(movieId)).orElse(Collections.emptyList());
     }
 
     public List<ActorDto> findAllActor() {
-        return actorDao.findAll().stream().map(actorMapper::mapper).toList();
+        return Optional.of(actorDao.findAll().stream().map(actorMapper::mapper).toList()).orElse(Collections.emptyList());
     }
 
     public List<ActorDto> findActorsByPrefix(String prefix) {
-        return actorDao.findActorsByPrefix(prefix).stream().map(actorMapper::mapper).toList();
+        var param = EntityValidator.validatorPrefix(prefix);
+        return actorDao.findActorsByPrefix(param).stream().map(actorMapper::mapper).toList();
     }
 
     public void save(CreateOrUpdateActorDto createActorDto) {
@@ -60,9 +66,5 @@ public class ActorService {
 
     public void delete(Integer actorId) {
         actorDao.delete(actorId);
-    }
-
-    public static ActorService getInstance() {
-        return INSTANCE;
     }
 }

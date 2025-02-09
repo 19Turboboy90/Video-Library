@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.DirectorService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -15,13 +15,13 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.SAVE_DIRECTOR)
 public class DirectorSaveServlet extends HttpServlet {
-    private final DirectorService directorService = DirectorService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var directorId = req.getParameter("directorId");
         if (directorId != null && !directorId.isEmpty()) {
-            directorService.findDirectorById(Integer.parseInt(directorId))
+            factoryService.getDirectorService().findDirectorById(Integer.parseInt(directorId))
                     .ifPresent(director -> req.setAttribute("director", director));
         }
         req.getRequestDispatcher(JspHelper.prefixPath("director-create")).forward(req, resp);
@@ -34,7 +34,7 @@ public class DirectorSaveServlet extends HttpServlet {
         var birthday = req.getParameter("birthday");
 
         try {
-            directorService.save(CreateDirectorDto.builder()
+            factoryService.getDirectorService().save(CreateDirectorDto.builder()
                     .id(directorId)
                     .name(name)
                     .dateOfBirthday(birthday)

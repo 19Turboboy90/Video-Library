@@ -21,8 +21,7 @@ public class UserInfoServlet extends HttpServlet {
         var userId = Integer.parseInt(req.getParameter("userId"));
 
         try {
-            var user = userService.findById(userId);
-            req.setAttribute("user", user);
+            userService.findUserById(userId).ifPresent(user -> req.setAttribute("user", user));
             req.getRequestDispatcher(JspHelper.prefixPath("user-info")).forward(req, resp);
         } catch (NotFoundException e) {
             req.setAttribute("errorMessage", e.getErrors());

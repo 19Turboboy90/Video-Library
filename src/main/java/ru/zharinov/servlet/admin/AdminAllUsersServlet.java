@@ -17,8 +17,7 @@ public class AdminAllUsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var param = req.getParameter("prefix");
-        String prefix = param == null || param.isEmpty() ? "" : param;
+        var prefix = req.getParameter("prefix");
         req.setAttribute("users", userService.findAllUsersByPrefix(prefix));
         req.getRequestDispatcher(JspHelper.prefixPath("admin-all-users")).forward(req, resp);
     }
