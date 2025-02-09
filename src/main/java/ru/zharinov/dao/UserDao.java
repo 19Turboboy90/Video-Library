@@ -40,6 +40,11 @@ public class UserDao implements Dao<Integer, User> {
             WHERE u.name LIKE ?;
             """;
 
+    private static final String DELETE_USER = """
+            DELETE FROM users
+            WHERE users.id = ?
+            """;
+
 
     public static UserDao getInstance() {
         return INSTANCE;
@@ -118,6 +123,16 @@ public class UserDao implements Dao<Integer, User> {
 
     }
 
+    @Override
+    @SneakyThrows
+    public boolean delete(Integer id) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_USER)) {
+            preparedStatement.setObject(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
     private User buildUser(ResultSet resultSet) throws SQLException {
         return User.builder()
                 .id(resultSet.getObject("id", Integer.class))
@@ -126,10 +141,5 @@ public class UserDao implements Dao<Integer, User> {
                 .password(resultSet.getObject("password", String.class))
                 .role(Role.valueOf(resultSet.getObject("role", String.class)))
                 .build();
-    }
-
-    @Override
-    public boolean delete(Integer id) {
-        return false;
     }
 }

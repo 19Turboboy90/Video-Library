@@ -27,13 +27,11 @@ public class ActorDeleteServlet extends HttpServlet {
         var actorId = req.getParameter("actorId");
 
         try {
-            if (actorId != null && !actorId.isEmpty()) {
-                factoryService.getActorService().delete(Integer.parseInt(actorId));
-            }
+            factoryService.getActorService().delete(Integer.parseInt(actorId));
             resp.sendRedirect(UrlPath.ADMIN_INFO_ACTORS);
         } catch (NotFoundException e) {
-            req.setAttribute("errors", e.getErrors());
-            doGet(req, resp);
+            req.setAttribute("errorMessage", e.getErrors());
+            req.getRequestDispatcher(JspHelper.prefixPath("errorPage")).forward(req, resp);
         }
     }
 }

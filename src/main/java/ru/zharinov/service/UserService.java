@@ -57,6 +57,10 @@ public class UserService {
                 .orElse(emptyList());
     }
 
+    public void deleteUser(Integer userId) {
+        userDao.delete(userId);
+    }
+
     public static UserService getInstance() {
         return INSTANCE;
     }
