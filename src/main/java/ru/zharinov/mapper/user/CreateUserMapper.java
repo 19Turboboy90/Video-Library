@@ -15,11 +15,11 @@ public class CreateUserMapper implements Mapper<CreateUserDto, User> {
     @Override
     public User mapper(CreateUserDto object) {
         return User.builder()
-                .id(object.getId().isEmpty() ? null : Integer.parseInt(object.getId()))
+                .id(object.getId() == null ? null : Integer.parseInt(object.getId()))
                 .name(object.getName())
                 .email(object.getEmail())
                 .password(object.getPassword())
-                .role(Role.valueOf(object.getRole()))
+                .role(object.getRole() == null ? Role.USER : Role.valueOf(object.getRole()))
                 .build();
     }
 
