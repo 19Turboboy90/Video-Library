@@ -23,13 +23,6 @@
     </c:forEach>
     <br>
     <div>
-        <div style="display: flex">
-            <div style="margin-right: 10px">
-                <form action="${pageContext.request.contextPath}/admin/user-add" method="get">
-                    <button type="submit">Добавить пользователя</button>
-                </form>
-            </div>
-        </div>
         <br>
         <br>
         <div>

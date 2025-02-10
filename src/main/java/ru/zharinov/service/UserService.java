@@ -40,6 +40,14 @@ public class UserService {
         return user.getId();
     }
 
+    public void updateUser(CreateUserDto createUserDto) {
+        var valid = userValidation.isValid(createUserDto);
+        if (!valid.isValid()) {
+            throw new NotFoundException(valid.getErrors());
+        }
+        userDao.update(creatUserMapper.mapper(createUserDto));
+    }
+
     public List<UserDto> findAllUsers() {
         return Optional.of(userDao.findAll().stream().map(userMapper::mapper).toList()).orElse(emptyList());
     }

@@ -45,6 +45,10 @@ public class UserDao implements Dao<Integer, User> {
             WHERE users.id = ?
             """;
 
+    private static final String UPDATE_USER = """
+            UPDATE users  SET name = ?, email = ?, password = ?, role = ? WHERE id = ?;
+            """;
+
 
     public static UserDao getInstance() {
         return INSTANCE;
@@ -119,8 +123,18 @@ public class UserDao implements Dao<Integer, User> {
     }
 
     @Override
+    @SneakyThrows
     public void update(User entity) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(UPDATE_USER)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getEmail());
+            preparedStatement.setObject(3, entity.getPassword());
+            preparedStatement.setObject(4, entity.getRole().name());
+            preparedStatement.setObject(5, entity.getId());
 
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override

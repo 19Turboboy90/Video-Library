@@ -16,7 +16,7 @@ public class UrlPath {
     public static final String SAVE_DIRECTOR = "/admin/add-director";
     public static final String SAVE_ACTOR = "/admin/add-actor";
     public static final String SAVE_MOVIE = "/admin/add-movie";
-    public static final String UPDATE_USER = "/admin/update-user";
+    public static final String ADMIN_UPDATE_USER = "/admin/update-user";
     public static final String ADMIN_INFO_MOVIES = "/admin/movies-page";
     public static final String ADMIN_INFO_ACTORS = "/admin/actors-page";
     public static final String ADMIN_INFO_DIRECTORS = "/admin/directors-page";
