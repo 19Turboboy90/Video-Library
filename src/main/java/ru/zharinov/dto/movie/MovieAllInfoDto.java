@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import ru.zharinov.dto.actor.ActorDto;
 import ru.zharinov.dto.director.DirectorDto;
-import ru.zharinov.dto.director.DirectorWithMoviesDto;
+import ru.zharinov.dto.feedback.FeedbackDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,4 +20,5 @@ public class MovieAllInfoDto {
     String genre;
     DirectorDto director;
     List<ActorDto> actors;
+    List<FeedbackDto> feedbacks;
 }

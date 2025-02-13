@@ -19,6 +19,7 @@ public class MovieService {
     private final MovieDao movieDao = MovieDao.getInstance();
     private final MovieMapper movieMapper = MovieMapper.getInstance();
     private final MovieAllInfoMapper movieAllInfoMapper = MovieAllInfoMapper.getInstance();
+    private final FeedbackService feedbackService = FeedbackService.getInstance();
 
     public MovieService(FactoryService factoryService) {
         this.factoryService = factoryService;
@@ -54,11 +55,12 @@ public class MovieService {
         var directorByMovieId = factoryService.getDirectorService().findDirectorByMovieId(movieId);
         //Поиск актеров по id фильма
         var allActorByMovieId = factoryService.getActorService().findAllActorByMovieId(movieId);
-
+        var allFeedbackByMovieId = feedbackService.findAllFeedbackByMovieId(movieId);
         var movie = movieDao.findById(movieId);
         EntityValidator.validateEntityExists(movie, movieId, "movie");
         movie.ifPresent(mov -> mov.setActors(allActorByMovieId));
         movie.ifPresent(mov -> mov.setDirector(directorByMovieId.orElseGet(Director::new)));
+        movie.ifPresent(mov -> mov.setFeedbacks(allFeedbackByMovieId));
 
         return movie.map(movieAllInfoMapper::mapper);
     }

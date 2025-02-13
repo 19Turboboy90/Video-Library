@@ -148,6 +148,7 @@ public class UserDao implements Dao<Integer, User> {
     }
 
     private User buildUser(ResultSet resultSet) throws SQLException {
+
         return User.builder()
                 .id(resultSet.getObject("id", Integer.class))
                 .name(resultSet.getObject("name", String.class))

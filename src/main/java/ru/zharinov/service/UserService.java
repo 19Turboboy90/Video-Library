@@ -7,6 +7,7 @@ import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.dto.user.UserDto;
 import ru.zharinov.exception.NotFoundException;
 import ru.zharinov.mapper.user.CreateUserMapper;
+import ru.zharinov.mapper.user.UserWithFidbacksMapper;
 import ru.zharinov.mapper.user.UserMapper;
 import ru.zharinov.validation.EntityValidator;
 import ru.zharinov.validation.UserValidation;
@@ -23,7 +24,11 @@ public class UserService {
     private final UserDao userDao = UserDao.getInstance();
     private final UserMapper userMapper = UserMapper.getInstance();
     private static final CreateUserMapper creatUserMapper = CreateUserMapper.getInstance();
+    private static final UserWithFidbacksMapper userWithFidbacksMapper = UserWithFidbacksMapper.getInstance();
     private static final UserValidation userValidation = UserValidation.getInstance();
+    private static final FactoryService factoryService = FactoryService.getInstance();
+    private final FeedbackService feedbackService = FeedbackService.getInstance();
+
 
     public Optional<UserDto> login(String email, String password) {
         return userDao.findUserByEmailAndPassword(email, password).map(userMapper::mapper);
@@ -56,7 +61,9 @@ public class UserService {
         EntityValidator.validateId(userId, "user");
         var user = userDao.findById(userId);
         EntityValidator.validateEntityExists(user, userId, "user");
-        return user.map(userMapper::mapper);
+        var allFeedbackByUserId = feedbackService.findAllFeedbackByUserId(userId);
+        user.ifPresent(u -> u.setFeedbacks(allFeedbackByUserId));
+        return user.map(userWithFidbacksMapper::mapper);
     }
 
     public List<UserDto> findAllUsersByPrefix(String prefix) {

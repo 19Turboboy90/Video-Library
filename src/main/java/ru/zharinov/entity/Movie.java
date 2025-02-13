@@ -20,4 +20,5 @@ public class Movie {
     private String genre;
     private Director director;
     private List<Actor> actors;
+    private List<Feedback> feedbacks;
 }

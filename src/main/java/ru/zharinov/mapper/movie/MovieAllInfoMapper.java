@@ -7,6 +7,7 @@ import ru.zharinov.mapper.Mapper;
 import ru.zharinov.mapper.actor.ActorMapper;
 import ru.zharinov.mapper.director.DirectorMapper;
 import ru.zharinov.mapper.director.DirectorWithMoviesMapper;
+import ru.zharinov.mapper.feedback.FeedbackMapper;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -16,6 +17,7 @@ public class MovieAllInfoMapper implements Mapper<Movie, MovieAllInfoDto> {
 
     private final ActorMapper actorMapper = ActorMapper.getInstance();
     private final DirectorMapper directorMapper = DirectorMapper.getInstance();
+    private final FeedbackMapper feedbackMapper = FeedbackMapper.getInstance();
     private final DirectorWithMoviesMapper directorWithMoviesMapper = DirectorWithMoviesMapper.getInstance();
 
     @Override
@@ -28,6 +30,7 @@ public class MovieAllInfoMapper implements Mapper<Movie, MovieAllInfoDto> {
                 .genre(object.getGenre())
                 .director(directorMapper.mapper(object.getDirector()))
                 .actors(object.getActors().stream().map(actorMapper::mapper).toList())
+                .feedbacks(object.getFeedbacks().stream().map(feedbackMapper::mapper).toList())
                 .build();
     }
 

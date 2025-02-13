@@ -39,7 +39,6 @@
                 </div>
             </div>
         </div>
-
         <div style="width: 50%">
             <h3>В главных ролях</h3>
             <c:forEach var="actor" items="${requestScope.movie.actors}">
@@ -48,6 +47,21 @@
                 </li>
             </c:forEach>
         </div>
+    </div>
+    <br>
+    <br>
+    <div id="feedback">
+        <с:forEach var="feed" items="${requestScope.movie.feedbacks}">
+            <div style="padding: 10px;border: 2px solid; color: black;">
+                <div style="padding-bottom: 20px">${feed.user.name}</div>
+                <div style="justify-content: space-between; display: flex">
+                    <div style="left: auto">${feed.text}</div>
+
+                    <div style="right: auto">${feed.assessment}</div>
+                </div>
+            </div>
+            <br>
+        </с:forEach>
     </div>
     <br>
     <br>
