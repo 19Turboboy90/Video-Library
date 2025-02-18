@@ -50,6 +50,11 @@ public class MovieService {
         return movieDao.findMoviesByPrefix(param).stream().map(movieMapper::mapper).toList();
     }
 
+    public Optional<Movie> findById(Integer movieId) {
+        EntityValidator.validateId(movieId, "movieId");
+        return movieDao.findById(movieId);
+    }
+
     public Optional<MovieAllInfoDto> findMovieById(Integer movieId) {
         EntityValidator.validateId(movieId, "movie");
         var directorByMovieId = factoryService.getDirectorService().findDirectorByMovieId(movieId);

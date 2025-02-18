@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.entity.Role;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.UserService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.REGISTRATION)
 public class RegistrationServlet extends HttpServlet {
-    private static final UserService userService = UserService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,7 +34,7 @@ public class RegistrationServlet extends HttpServlet {
                 .build();
 
         try {
-            userService.save(userDto);
+            factoryService.getUserService().save(userDto);
             resp.sendRedirect(UrlPath.LOGIN);
         } catch (NotFoundException e) {
             req.setAttribute("errors", e.getErrors());

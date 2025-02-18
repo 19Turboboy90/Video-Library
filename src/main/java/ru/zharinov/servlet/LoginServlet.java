@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import ru.zharinov.dto.user.UserDto;
-import ru.zharinov.service.UserService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.LOGIN)
 public class LoginServlet extends HttpServlet {
-    private final UserService userService = UserService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var email = req.getParameter("email");
         var password = req.getParameter("password");
-        userService.login(email, password).ifPresentOrElse(
+        factoryService.getUserService().login(email, password).ifPresentOrElse(
                 user -> onLoginSuccess(user, req, resp),
                 () -> onLoginFail(req, resp)
         );

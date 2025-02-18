@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -33,6 +34,10 @@ public class FeedbackDao implements Dao<Integer, Feedback> {
 
     private static final String FIND_ALL_FEEDBACK_BY_USER_ID = FIND_ALL_FEEDBACK + """            
             WHERE u.id = ?;
+            """;
+
+    private static final String SAVE_FEEDBACK = """
+            INSERT INTO feedback (text, assessment, movie_id, user_id) VALUES (?, ?, ?, ?);
             """;
 
 
@@ -65,8 +70,21 @@ public class FeedbackDao implements Dao<Integer, Feedback> {
     }
 
     @Override
+    @SneakyThrows
     public Feedback save(Feedback entity) {
-        return null;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_FEEDBACK, RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, entity.getText());
+            preparedStatement.setObject(2, entity.getAssessment());
+            preparedStatement.setObject(3, entity.getMovie().getId());
+            preparedStatement.setObject(4, entity.getUser().getId());
+
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            entity.setId(generatedKeys.getObject("id", Integer.class));
+            return entity;
+        }
     }
 
     @Override

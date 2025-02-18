@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.entity.Role;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.service.UserService;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
 
@@ -16,14 +16,14 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.ADMIN_UPDATE_USER)
 public class AdminUserUpdateServlet extends HttpServlet {
-    private final UserService userService = UserService.getInstance();
+    private final FactoryService factoryService = FactoryService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("roles", Role.values());
         var userId = req.getParameter("userId");
         if (userId != null && !userId.isEmpty()) {
-            userService.findUserById(Integer.parseInt(userId)).ifPresent(user -> req.setAttribute("user", user));
+            factoryService.getUserService().findUserById(Integer.parseInt(userId)).ifPresent(user -> req.setAttribute("user", user));
         }
         req.getRequestDispatcher(JspHelper.prefixPath("admin_update-user")).forward(req, resp);
     }
@@ -39,7 +39,7 @@ public class AdminUserUpdateServlet extends HttpServlet {
                 .build();
 
         try {
-            userService.updateUser(userDto);
+            factoryService.getUserService().updateUser(userDto);
             resp.sendRedirect(UrlPath.ADMIN_INFO_USERS);
         } catch (NotFoundException e) {
             req.setAttribute("errors", e.getErrors());

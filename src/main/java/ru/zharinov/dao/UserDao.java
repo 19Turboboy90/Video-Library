@@ -77,7 +77,7 @@ public class UserDao implements Dao<Integer, User> {
     @SneakyThrows
     public Optional<User> findById(Integer id) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(FIND_USER_BY_ID);) {
+             var preparedStatement = connection.prepareStatement(FIND_USER_BY_ID)) {
             preparedStatement.setObject(1, id);
             var resultSet = preparedStatement.executeQuery();
             User user = null;
@@ -91,7 +91,8 @@ public class UserDao implements Dao<Integer, User> {
     @SneakyThrows
     public Optional<User> findUserByEmailAndPassword(String email, String password) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(FIND_USER_BY_EMAIL_AND_PASSWORD)) {
+             var preparedStatement =
+                     connection.prepareStatement(FIND_USER_BY_EMAIL_AND_PASSWORD)) {
             preparedStatement.setObject(1, email);
             preparedStatement.setObject(2, password);
             var resultSet = preparedStatement.executeQuery();

@@ -66,6 +66,38 @@
     <br>
     <br>
     <div>
+        <form action="${requestScope.request.contextPath}/add-feedback" method="post">
+            <input type="hidden" name="movieId" value="${requestScope.movie.id}">
+            <input type="hidden" name="userId" value="${sessionScope.user.id}">
+            <div>
+                <label for="text">
+                    <textarea name="text" cols="30" rows="5" id="text" placeholder="Оставить отзыв"
+                              style="width: 100%; border: 2px solid; color: black;"></textarea>
+                </label>
+                <br>
+                <br>
+                <div class="rating">
+                    <label>
+                        <select name="rating">
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★☆</option>
+                            <option value="3">★★★☆☆</option>
+                            <option value="2">★★☆☆☆</option>
+                            <option value="1">★☆☆☆☆</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <br>
+            <div>
+                <button type="submit">Сохранить</button>
+            </div>
+        </form>
+
+    </div>
+    <br>
+    <br>
+    <div>
         <form action="${requestScope.request.contextPath}/movies" method="get">
             <button type="submit">На главную страницу</button>
         </form>

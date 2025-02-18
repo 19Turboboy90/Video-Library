@@ -10,6 +10,7 @@ public class FactoryService {
     private MovieService movieService;
     private ActorService actorService;
     private DirectorService directorService;
+    private UserService userService;
 
     public MovieService getMovieService() {
         if (movieService == null) {
@@ -30,6 +31,13 @@ public class FactoryService {
             directorService = new DirectorService(this);
         }
         return directorService;
+    }
+
+    public UserService getUserService() {
+        if (userService == null) {
+            userService = new UserService();
+        }
+        return userService;
     }
 
 
