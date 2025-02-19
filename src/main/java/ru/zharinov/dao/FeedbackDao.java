@@ -40,6 +40,11 @@ public class FeedbackDao implements Dao<Integer, Feedback> {
             INSERT INTO feedback (text, assessment, movie_id, user_id) VALUES (?, ?, ?, ?);
             """;
 
+    public static final String DELETE_FEEDBACK = """
+            DELETE FROM feedback
+            WHERE id = ?;
+            """;
+
 
     @Override
     public List<Feedback> findAll() {
@@ -93,8 +98,13 @@ public class FeedbackDao implements Dao<Integer, Feedback> {
     }
 
     @Override
+    @SneakyThrows
     public boolean delete(Integer id) {
-        return false;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_FEEDBACK)) {
+            preparedStatement.setObject(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        }
     }
 
     private static List<Feedback> getFeedbacks(PreparedStatement preparedStatement) throws SQLException {

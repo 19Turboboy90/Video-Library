@@ -38,6 +38,11 @@ public class FeedbackService {
         feedbackDao.save(feedback);
     }
 
+    public void deleteFeedbackById(Integer id) {
+        EntityValidator.validateId(id, "feedbackId");
+        feedbackDao.delete(id);
+    }
+
     public static FeedbackService getInstance() {
         return INSTANCE;
     }

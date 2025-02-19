@@ -58,6 +58,12 @@
                 </div>
             </div>
             <br>
+            <form action="${requestScope.feedback}/delete-feedback" method="post"
+                  style="justify-content: right;display: flex">
+                <input type="hidden" name="feedbackId" value="${feed.id}">
+                <input type="hidden" name="userId" value="${sessionScope.user.id}">
+                <button type="submit">Удалить комментарий</button>
+            </form>
         </c:forEach>
     </div>
     <br>
