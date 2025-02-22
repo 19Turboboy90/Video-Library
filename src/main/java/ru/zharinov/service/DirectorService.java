@@ -70,4 +70,8 @@ public class DirectorService {
     public void delete(Integer directorId) {
         directorDao.delete(directorId);
     }
+
+    public Optional<Director> findById(Integer directorId) {
+        return directorDao.findById(directorId);
+    }
 }

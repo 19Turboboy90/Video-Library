@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -51,6 +52,32 @@ public class MovieDao implements Dao<Integer, Movie> {
             WHERE d.id = ?;
             """;
 
+    private static final String SAVE_MOVIE = """
+            INSERT INTO movie (name, premiere_date, country, genre, director_id) VALUES (?, ?, ?, ?, ?);
+            """;
+
+    private static final String SAVE_MOVIE_TO_ACTOR_MOVIE = """
+            INSERT INTO actor_movie (actor_id, movie_id) VALUES (?, ?);
+            """;
+
+    private static final String UPDATE_MOVIE = """
+            UPDATE movie SET
+                name = ?,
+                premiere_date = ?,
+                country = ?,
+                genre = ?,
+                director_id = ?
+            WHERE id = ?;
+            """;
+    private static final String DELETE_MOVIE = """
+            DELETE FROM movie
+            WHERE id = ?
+            """;
+
+    private static final String DELETE_MOVIE_FROM_ACTOR_AND_MOVIE = """
+            DELETE FROM actor_movie
+            WHERE movie_id = ?
+            """;
 
     @Override
     @SneakyThrows
@@ -113,18 +140,66 @@ public class MovieDao implements Dao<Integer, Movie> {
     }
 
     @Override
-    public Movie save(Movie entity) {
-        return null;
+    @SneakyThrows
+    public Movie save(Movie entity) throws SQLException {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_MOVIE, RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getPremierDate());
+            preparedStatement.setObject(3, entity.getCountry());
+            preparedStatement.setObject(4, entity.getGenre());
+            preparedStatement.setObject(5, entity.getDirector().getId());
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            entity.setId(generatedKeys.getObject("id", Integer.class));
+            return entity;
+        }
     }
 
     @Override
+    @SneakyThrows
     public void update(Movie entity) {
-
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(UPDATE_MOVIE)) {
+            preparedStatement.setObject(1, entity.getName());
+            preparedStatement.setObject(2, entity.getPremierDate());
+            preparedStatement.setObject(3, entity.getCountry());
+            preparedStatement.setObject(4, entity.getGenre());
+            preparedStatement.setObject(5, entity.getDirector().getId());
+            preparedStatement.setObject(6, entity.getId());
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override
+    @SneakyThrows
     public boolean delete(Integer id) {
-        return false;
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_MOVIE)) {
+            preparedStatement.setObject(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
+    @SneakyThrows
+    public void deleteMoviesFromActorMovie(Integer movieId) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement = connection.prepareStatement(DELETE_MOVIE_FROM_ACTOR_AND_MOVIE)) {
+            preparedStatement.setObject(1, movieId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    @SneakyThrows
+    public void saveMovieIdAndActorIdToActorMovie(Integer actorId, Integer movieId) {
+        try (var connection = ConnectionManager.getConnection();
+             var preparedStatement =
+                     connection.prepareStatement(SAVE_MOVIE_TO_ACTOR_MOVIE, RETURN_GENERATED_KEYS)) {
+            preparedStatement.setObject(1, actorId);
+            preparedStatement.setObject(2, movieId);
+            preparedStatement.executeUpdate();
+        }
     }
 
     private List<Movie> getMovies(PreparedStatement preparedStatement) throws SQLException {

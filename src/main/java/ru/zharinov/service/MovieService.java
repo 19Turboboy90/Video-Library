@@ -1,14 +1,18 @@
 package ru.zharinov.service;
 
 import ru.zharinov.dao.MovieDao;
+import ru.zharinov.dto.movie.CreateMovieDto;
 import ru.zharinov.dto.movie.MovieAllInfoDto;
 import ru.zharinov.dto.movie.MovieInfoDto;
 import ru.zharinov.entity.Director;
 import ru.zharinov.entity.Movie;
+import ru.zharinov.mapper.movie.CreateOrUpdateMovieMapper;
 import ru.zharinov.mapper.movie.MovieAllInfoMapper;
 import ru.zharinov.mapper.movie.MovieMapper;
 import ru.zharinov.validation.EntityValidator;
 
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +24,7 @@ public class MovieService {
     private final MovieMapper movieMapper = MovieMapper.getInstance();
     private final MovieAllInfoMapper movieAllInfoMapper = MovieAllInfoMapper.getInstance();
     private final FeedbackService feedbackService = FeedbackService.getInstance();
+    private final CreateOrUpdateMovieMapper createOrUpdateMovieMapper = CreateOrUpdateMovieMapper.getInstance();
 
     public MovieService(FactoryService factoryService) {
         this.factoryService = factoryService;
@@ -68,5 +73,22 @@ public class MovieService {
         movie.ifPresent(mov -> mov.setFeedbacks(allFeedbackByMovieId));
 
         return movie.map(movieAllInfoMapper::mapper);
+    }
+
+    public void saveOrUpdateMovie(CreateMovieDto createMovieDto) throws SQLException {
+        var directorById =
+                factoryService.getDirectorService().findById(Integer.parseInt(createMovieDto.getDirectorId()));
+        EntityValidator.validateEntityExists(directorById, createMovieDto.getDirectorId(), "directorId");
+        var movie = createOrUpdateMovieMapper.mapper(createMovieDto);
+        movie.setDirector(directorById.orElseThrow());
+        var actorsIdList = Arrays.stream(createMovieDto.getActorsId()).map(Integer::parseInt).toList();
+        if (createMovieDto.getId() == null || createMovieDto.getId().isBlank()) {
+            movieDao.save(movie);
+            actorsIdList.forEach(actorId -> movieDao.saveMovieIdAndActorIdToActorMovie(actorId, movie.getId()));
+        } else {
+            movieDao.deleteMoviesFromActorMovie(Integer.parseInt(createMovieDto.getId()));
+            movieDao.update(movie);
+            actorsIdList.forEach(actorId -> movieDao.saveMovieIdAndActorIdToActorMovie(actorId, movie.getId()));
+        }
     }
 }

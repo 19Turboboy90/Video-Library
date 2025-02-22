@@ -23,7 +23,7 @@
                 <input type="hidden" name="directorId" value="${requestScope.director.id}">
                 <button type="submit">Изменить режиссера</button>
             </form>
-            <form action="${requestScope.request.contextPath}/admin/director-delete" method="post"
+            <form action="${requestScope.request.contextPath}/admin/delete-director" method="post"
                   style="display: inline;">
                 <input type="hidden" name="directorId" value="${requestScope.director.id}">
                 <button type="submit">Удалить режиссера</button>

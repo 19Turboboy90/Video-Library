@@ -28,7 +28,7 @@
             <input type="hidden" name="userId" value="${requestScope.user.id}">
             <button type="submit">Изменить пользователя</button>
         </form>
-        <form action="${requestScope.request.contextPath}/admin/user-delete" method="post"
+        <form action="${requestScope.request.contextPath}/admin/delete-user" method="post"
               style="display: inline;">
             <input type="hidden" name="userId" value="${requestScope.user.id}">
             <button type="submit">Удалить пользователя</button>

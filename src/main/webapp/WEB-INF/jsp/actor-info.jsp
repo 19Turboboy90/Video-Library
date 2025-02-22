@@ -23,7 +23,7 @@
                 <input type="hidden" name="actorId" value="${requestScope.actor.id}">
                 <button type="submit">Изменить актера</button>
             </form>
-            <form action="${requestScope.request.contextPath}/admin/actor-delete" method="post"
+            <form action="${requestScope.request.contextPath}/admin/delete-actor" method="post"
                   style="display: inline;">
                 <input type="hidden" name="actorId" value="${requestScope.actor.id}">
                 <button type="submit">Удалить актера</button>

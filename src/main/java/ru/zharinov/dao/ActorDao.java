@@ -42,10 +42,6 @@ public class ActorDao implements Dao<Integer, Actor> {
             INSERT INTO actor (name, date_of_birth) VALUES (?, ?);
             """;
 
-    private static final String SAVE_ACTOR_TO_ACTOR_MOVIE = """
-            INSERT INTO actor_movie (actor_id) VALUES (?);
-            """;
-
     private static final String UPDATE_ACTOR = """
             UPDATE actor SET name = ?, date_of_birth = ? WHERE id = ?;
             """;
@@ -53,6 +49,11 @@ public class ActorDao implements Dao<Integer, Actor> {
     private static final String DELETE_ACTOR_BY_ID = """
             DELETE FROM actor
             WHERE actor.id = ?;
+            """;
+
+    private static final String DELETE_ACTOR_FROM_ACTOR_MOVIE = """
+            DELETE FROM actor_movie
+            WHERE actor_id =?;
             """;
 
     @Override
@@ -99,7 +100,6 @@ public class ActorDao implements Dao<Integer, Actor> {
             var generatedKeys = preparedStatement.getGeneratedKeys();
             generatedKeys.next();
             entity.setId(generatedKeys.getObject("id", Integer.class));
-            saveActorToActorMovie(entity.getId());
             return entity;
         }
     }
@@ -122,6 +122,7 @@ public class ActorDao implements Dao<Integer, Actor> {
         try (var connection = ConnectionManager.getConnection();
              var preparedStatement = connection.prepareStatement(DELETE_ACTOR_BY_ID)) {
             preparedStatement.setObject(1, id);
+            deleteActorFromActorMovie(id);
             return preparedStatement.executeUpdate() > 0;
         }
     }
@@ -136,10 +137,9 @@ public class ActorDao implements Dao<Integer, Actor> {
     }
 
     @SneakyThrows
-    private void saveActorToActorMovie(Integer actorId) {
+    private void deleteActorFromActorMovie(Integer actorId) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement =
-                     connection.prepareStatement(SAVE_ACTOR_TO_ACTOR_MOVIE, RETURN_GENERATED_KEYS)) {
+             var preparedStatement = connection.prepareStatement(DELETE_ACTOR_FROM_ACTOR_MOVIE)) {
             preparedStatement.setObject(1, actorId);
             preparedStatement.executeUpdate();
         }

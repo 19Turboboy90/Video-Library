@@ -30,10 +30,19 @@
                         <a href="${pageContext.request.contextPath}/director?directorId=${requestScope.movie.director.id}">${requestScope.movie.director.name}</a>
                     </div>
                 </div>
+                <br>
                 <div>
                     <c:if test="${sessionScope.user.role.toString() == 'ADMIN'}">
-                        <form action="admin/update-movie" method="get">
+
+                        <form action="${requestScope.request.contextPath}/admin/add-movie" method="get"
+                              style="display: inline;">
+                            <input type="hidden" name="movieId" value="${requestScope.movie.id}">
                             <button type="submit">Редактировать фильм</button>
+                        </form>
+                        <form action="${requestScope.request.contextPath}/admin/delete-movie" method="post"
+                              style="display: inline;">
+                            <input type="hidden" name="movieId" value="${requestScope.movie.id}">
+                            <button type="submit">Удалить фильм</button>
                         </form>
                     </c:if>
                 </div>
