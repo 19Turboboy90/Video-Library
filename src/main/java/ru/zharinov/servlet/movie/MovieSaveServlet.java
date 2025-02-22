@@ -14,7 +14,7 @@ import ru.zharinov.util.UrlPath;
 
 import java.io.IOException;
 
-@WebServlet(UrlPath.SAVE_MOVIE)
+@WebServlet(UrlPath.ADMIN_SAVE_MOVIE)
 public class MovieSaveServlet extends HttpServlet {
     private final FactoryService factoryService = FactoryService.getInstance();
 

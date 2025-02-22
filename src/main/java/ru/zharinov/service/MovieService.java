@@ -91,4 +91,8 @@ public class MovieService {
             actorsIdList.forEach(actorId -> movieDao.saveMovieIdAndActorIdToActorMovie(actorId, movie.getId()));
         }
     }
+
+    public void deleteMovieById(Integer movieId) {
+        movieDao.delete(movieId);
+    }
 }

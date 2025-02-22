@@ -14,7 +14,7 @@ import static ru.zharinov.util.UrlPath.*;
 
 @WebFilter("/admin/*")
 public class AdminFilter implements Filter {
-    private static final Set<String> PRIVATE_URL = Set.of(SAVE_MOVIE, SAVE_ACTOR, SAVE_DIRECTOR, ADMIN_INFO_MOVIES,
+    private static final Set<String> PRIVATE_URL = Set.of(ADMIN_SAVE_MOVIE, SAVE_ACTOR, SAVE_DIRECTOR, ADMIN_INFO_MOVIES,
             ADMIN_INFO_ACTORS, ADMIN_INFO_DIRECTORS, ADMIN_PAGE, ADMIN_INFO_USERS);
 
     @Override
