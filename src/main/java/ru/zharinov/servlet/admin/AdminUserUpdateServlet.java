@@ -25,7 +25,7 @@ public class AdminUserUpdateServlet extends HttpServlet {
         if (userId != null && !userId.isEmpty()) {
             factoryService.getUserService().findUserById(Integer.parseInt(userId)).ifPresent(user -> req.setAttribute("user", user));
         }
-        req.getRequestDispatcher(JspHelper.prefixPath("admin_update-user")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.prefixPath("admin-update-user")).forward(req, resp);
     }
 
     @Override

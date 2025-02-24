@@ -2,17 +2,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Список режиссеров</title>
+    <title>List of directors</title>
 </head>
 <body>
+<%@ include file="header.jsp" %>
 <div>
-    <h1>Список режиссеров:</h1>
+    <h1><fmt:message key="page.list.director"/>:</h1>
     <div>
         <form action="${pageContext.request.contextPath}/admin/directors-page" method="get">
-            <label for="prefix">Поиск режиссера</label>
-            <input type="text" id="prefix" name="prefix" placeholder="ввести имя режиссера">
-            <button type="submit">Отфильтровать</button>
-            <button type="submit">Отмена</button>
+            <label for="prefix"><fmt:message key="page.search.director"/>:</label>
+            <input type="text" id="prefix" name="prefix"
+                   placeholder="<fmt:message key="enter.name"/>">
+            <button type="submit"><fmt:message key="filter"/></button>
+            <button type="submit"><fmt:message key="cancel"/></button>
         </form>
     </div>
     <c:forEach var="director" items="${requestScope.directors}">
@@ -25,7 +27,7 @@
         <div style="display: flex">
             <div style="margin-right: 10px">
                 <form action="${pageContext.request.contextPath}/admin/add-director" method="get">
-                    <button type="submit">Добавить режиссера</button>
+                    <button type="submit"><fmt:message key="create"/></button>
                 </form>
             </div>
         </div>
@@ -33,7 +35,7 @@
         <br>
         <div>
             <form action="${requestScope.request.contextPath}/admin" method="get">
-                <button type="submit">На главную страницу</button>
+                <button type="submit"><fmt:message key="page.main-page"/></button>
             </form>
         </div>
     </div>

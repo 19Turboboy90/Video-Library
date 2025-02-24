@@ -1,36 +1,39 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+
 <head>
     <title>Login</title>
 </head>
 <body>
+<%@ include file="header.jsp" %>
 <div>
     <form action="${pageContext.request.contextPath}/login" method="post">
         <div>
             <label for="email">
                 <input type="text" name="email" id="email" value="${param.email}"
-                       placeholder="Введите почту" required>
+                       placeholder="<fmt:message key="enter.email"/>" required>
             </label>
         </div>
         <br>
         <div>
             <label for="password">
                 <input type="password" name="password" id="password" value="${param.password}"
-                       placeholder="Введите пароль" required>
+                       placeholder="<fmt:message key="enter.password"/>" required>
             </label>
         </div>
         <br>
         <div>
-            <button type="submit">Войти</button>
+            <button type="submit"><fmt:message key="page.login.submit.button"/></button>
         </div>
         <br>
         <a href="${pageContext.request.contextPath}/registration">
-            <button type="button">Зарегистрироваться</button>
+            <button type="button"><fmt:message key="page.login.register.button"/></button>
         </a>
         <c:if test="${param.error != null}">
             <div style="color: red">
-                <span>почта или пароль не корректны</span>
+                <span><fmt:message key="page.login.error"/></span>
             </div>
         </c:if>
     </form>

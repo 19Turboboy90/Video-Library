@@ -2,12 +2,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Update user</title>
 </head>
 <body>
 <%@ include file="header.jsp" %>
 <div>
-    <h2>Изменение пользователя</h2>
+    <h2><fmt:message key="update"/></h2>
     <form action="${requestScope.request.contextPath}/admin/update-user" method="post">
         <div>
             <input type="hidden" name="userId" value="${requestScope.user != null ? requestScope.user.id : ''}">
@@ -15,25 +15,24 @@
         <div>
             <label for="name">
                 <input type="text" name="name" id="name"
-                       value="${requestScope.user != null ? requestScope.user.name : ''}" placeholder="Введите имя"
-                       required>
+                       value="${requestScope.user != null ? requestScope.user.name : ''}" placeholder="
+                       <fmt:message key="name"/>" required>
             </label>
         </div>
         <br>
         <div>
             <label for="email">
                 <input type="text" name="email" id="email"
-                       value="${requestScope.user != null ? requestScope.user.email : ''}" placeholder="Введите почту"
-                       required>
+                       value="${requestScope.user != null ? requestScope.user.email : ''}" placeholder="
+                       <fmt:message key="email"/>" required>
             </label>
         </div>
         <br>
         <div>
             <label for="password">
                 <input type="password" name="password" id="password"
-                       value="${requestScope.user != null ? requestScope.user.password : ''}"
-                       placeholder="Введите пароль"
-                       required>
+                       value="${requestScope.user != null ? requestScope.user.password : ''}" placeholder="
+                       <fmt:message key="password"/>" required>
             </label>
         </div>
         <br>
@@ -49,7 +48,7 @@
         </div>
         <br>
         <br>
-        <button type="submit">Сохранить</button>
+        <button type="submit"><fmt:message key="update"/></button>
         <br>
         <br>
 
@@ -65,7 +64,7 @@
 
     <div>
         <form action="${requestScope.request.contextPath}/admin" method="get">
-            <button type="submit">На главную страницу</button>
+            <button type="submit"><fmt:message key="page.main-page"/></button>
         </form>
     </div>
 </div>

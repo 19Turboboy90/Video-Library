@@ -14,12 +14,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static ru.zharinov.util.UrlPath.LOGIN;
-import static ru.zharinov.util.UrlPath.REGISTRATION;
+import static ru.zharinov.util.UrlPath.*;
 
 @WebFilter("/*")
 public class AuthorizationFilter implements Filter {
-    private static final Set<String> PUBLIC_PATH = Set.of(LOGIN, REGISTRATION);
+    private static final Set<String> PUBLIC_PATH = Set.of(LOGIN, REGISTRATION, LOCALE);
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
