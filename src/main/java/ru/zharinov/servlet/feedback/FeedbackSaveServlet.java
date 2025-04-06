@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.zharinov.dto.feedback.CreateFeedbackDto;
 import ru.zharinov.exception.NotFoundException;
+import ru.zharinov.service.FactoryService;
 import ru.zharinov.service.FeedbackService;
 import ru.zharinov.util.JspHelper;
 import ru.zharinov.util.UrlPath;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(UrlPath.SAVE_FEEDBACK)
 public class FeedbackSaveServlet extends HttpServlet {
-    private final FeedbackService feedbackService = FeedbackService.getInstance();
+    private final FeedbackService feedbackService = FactoryService.getInstance().getFeedbackService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

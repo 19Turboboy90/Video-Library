@@ -1,6 +1,5 @@
 package ru.zharinov.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.entity.Director;
 import ru.zharinov.util.ConnectionManager;
@@ -13,11 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class DirectorDao implements Dao<Integer, Director> {
-    private static final DirectorDao INSTANCE = new DirectorDao();
 
     private static final String FIND_ALL_DIRECTORS = """
             SELECT d.id, d.name, d.date_of_birth
@@ -143,9 +139,5 @@ public class DirectorDao implements Dao<Integer, Director> {
                 .name(resultSet.getObject("name", String.class))
                 .dateOfBirthday(resultSet.getObject("date_of_birth", Date.class).toLocalDate())
                 .build();
-    }
-
-    public static DirectorDao getInstance() {
-        return INSTANCE;
     }
 }

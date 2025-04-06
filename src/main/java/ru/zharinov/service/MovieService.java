@@ -6,9 +6,7 @@ import ru.zharinov.dto.movie.MovieAllInfoDto;
 import ru.zharinov.dto.movie.MovieInfoDto;
 import ru.zharinov.entity.Director;
 import ru.zharinov.entity.Movie;
-import ru.zharinov.mapper.movie.CreateOrUpdateMovieMapper;
-import ru.zharinov.mapper.movie.MovieAllInfoMapper;
-import ru.zharinov.mapper.movie.MovieMapper;
+import ru.zharinov.mapper.MovieMapper;
 import ru.zharinov.validation.EntityValidator;
 
 import java.sql.SQLException;
@@ -20,18 +18,15 @@ import static java.util.Collections.emptyList;
 
 public class MovieService {
     private final FactoryService factoryService;
-    private final MovieDao movieDao = MovieDao.getInstance();
-    private final MovieMapper movieMapper = MovieMapper.getInstance();
-    private final MovieAllInfoMapper movieAllInfoMapper = MovieAllInfoMapper.getInstance();
-    private final FeedbackService feedbackService = FeedbackService.getInstance();
-    private final CreateOrUpdateMovieMapper createOrUpdateMovieMapper = CreateOrUpdateMovieMapper.getInstance();
+    private final MovieDao movieDao;
 
-    public MovieService(FactoryService factoryService) {
+    public MovieService(FactoryService factoryService, MovieDao movieDao) {
         this.factoryService = factoryService;
+        this.movieDao = movieDao;
     }
 
     public List<MovieInfoDto> findAllMovies() {
-        return Optional.of(movieDao.findAll().stream().map(movieMapper::mapper).toList())
+        return Optional.of(movieDao.findAll().stream().map(MovieMapper::toMovieInfoDto).toList())
                 .orElse(emptyList());
     }
 
@@ -46,13 +41,13 @@ public class MovieService {
     }
 
     public List<MovieInfoDto> findAllMoviesByDate(Integer fromDate, Integer toFrom) {
-        return Optional.of(movieDao.findAllMoviesByDate(fromDate, toFrom).stream().map(movieMapper::mapper).toList())
+        return Optional.of(movieDao.findAllMoviesByDate(fromDate, toFrom).stream().map(MovieMapper::toMovieInfoDto).toList())
                 .orElse(emptyList());
     }
 
     public List<MovieInfoDto> findMoviesByPrefix(String prefix) {
         var param = EntityValidator.validatorPrefix(prefix);
-        return movieDao.findMoviesByPrefix(param).stream().map(movieMapper::mapper).toList();
+        return movieDao.findMoviesByPrefix(param).stream().map(MovieMapper::toMovieInfoDto).toList();
     }
 
     public Optional<Movie> findById(Integer movieId) {
@@ -65,21 +60,22 @@ public class MovieService {
         var directorByMovieId = factoryService.getDirectorService().findDirectorByMovieId(movieId);
         //Поиск актеров по id фильма
         var allActorByMovieId = factoryService.getActorService().findAllActorByMovieId(movieId);
-        var allFeedbackByMovieId = feedbackService.findAllFeedbackByMovieId(movieId);
+        var allFeedbackByMovieId =
+                FactoryService.getInstance().getFeedbackService().findAllFeedbackByMovieId(movieId);
         var movie = movieDao.findById(movieId);
         EntityValidator.validateEntityExists(movie, movieId, "movie");
         movie.ifPresent(mov -> mov.setActors(allActorByMovieId));
         movie.ifPresent(mov -> mov.setDirector(directorByMovieId.orElseGet(Director::new)));
         movie.ifPresent(mov -> mov.setFeedbacks(allFeedbackByMovieId));
 
-        return movie.map(movieAllInfoMapper::mapper);
+        return movie.map(MovieMapper::toMovieAllInfoDto);
     }
 
     public void saveOrUpdateMovie(CreateMovieDto createMovieDto) throws SQLException {
         var directorById =
                 factoryService.getDirectorService().findById(Integer.parseInt(createMovieDto.getDirectorId()));
         EntityValidator.validateEntityExists(directorById, createMovieDto.getDirectorId(), "directorId");
-        var movie = createOrUpdateMovieMapper.mapper(createMovieDto);
+        var movie = MovieMapper.toMovie(createMovieDto);
         movie.setDirector(directorById.orElseThrow());
         var actorsIdList = Arrays.stream(createMovieDto.getActorsId()).map(Integer::parseInt).toList();
         if (createMovieDto.getId() == null || createMovieDto.getId().isBlank()) {

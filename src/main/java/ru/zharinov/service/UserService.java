@@ -6,9 +6,7 @@ import ru.zharinov.dto.user.CreateUserDto;
 import ru.zharinov.dto.user.UserDto;
 import ru.zharinov.entity.User;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.mapper.user.CreateUserMapper;
-import ru.zharinov.mapper.user.UserMapper;
-import ru.zharinov.mapper.user.UserWithFidbacksMapper;
+import ru.zharinov.mapper.UserMapper;
 import ru.zharinov.validation.EntityValidator;
 import ru.zharinov.validation.UserValidation;
 
@@ -18,16 +16,15 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 
 public class UserService {
-    private final UserDao userDao = UserDao.getInstance();
-    private final UserMapper userMapper = UserMapper.getInstance();
-    private static final CreateUserMapper creatUserMapper = CreateUserMapper.getInstance();
-    private static final UserWithFidbacksMapper userWithFidbacksMapper = UserWithFidbacksMapper.getInstance();
+    private final UserDao userDao;
     private static final UserValidation userValidation = UserValidation.getInstance();
-    private final FeedbackService feedbackService = FeedbackService.getInstance();
 
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public Optional<UserDto> login(String email, String password) {
-        return userDao.findUserByEmailAndPassword(email, password).map(userMapper::mapper);
+        return userDao.findUserByEmailAndPassword(email, password).map(UserMapper::toUserDto);
     }
 
     @SneakyThrows
@@ -36,7 +33,7 @@ public class UserService {
         if (!valid.isValid()) {
             throw new NotFoundException(valid.getErrors());
         }
-        var saveUser = creatUserMapper.mapper(userDto);
+        var saveUser = UserMapper.toUser(userDto);
         var user = userDao.save(saveUser);
         return user.getId();
     }
@@ -46,20 +43,21 @@ public class UserService {
         if (!valid.isValid()) {
             throw new NotFoundException(valid.getErrors());
         }
-        userDao.update(creatUserMapper.mapper(createUserDto));
+        userDao.update(UserMapper.toUser(createUserDto));
     }
 
     public List<UserDto> findAllUsers() {
-        return Optional.of(userDao.findAll().stream().map(userMapper::mapper).toList()).orElse(emptyList());
+        return Optional.of(userDao.findAll().stream().map(UserMapper::toUserDto).toList()).orElse(emptyList());
     }
 
     public Optional<UserDto> findUserById(Integer userId) {
         EntityValidator.validateId(userId, "user");
         var user = userDao.findById(userId);
         EntityValidator.validateEntityExists(user, userId, "user");
-        var allFeedbackByUserId = feedbackService.findAllFeedbackByUserId(userId);
+        var allFeedbackByUserId =
+                FactoryService.getInstance().getFeedbackService().findAllFeedbackByUserId(userId);
         user.ifPresent(u -> u.setFeedbacks(allFeedbackByUserId));
-        return user.map(userWithFidbacksMapper::mapper);
+        return user.map(UserMapper::toUserDtoWithFeedbacks);
     }
 
     public Optional<User> findById(Integer userId) {
@@ -69,7 +67,7 @@ public class UserService {
 
     public List<UserDto> findAllUsersByPrefix(String prefix) {
         var param = EntityValidator.validatorPrefix(prefix);
-        return Optional.of(userDao.findAllUsersByPrefix(param).stream().map(userMapper::mapper).toList())
+        return Optional.of(userDao.findAllUsersByPrefix(param).stream().map(UserMapper::toUserDto).toList())
                 .orElse(emptyList());
     }
 

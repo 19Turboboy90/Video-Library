@@ -1,29 +1,30 @@
 package ru.zharinov.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
 class ActorServiceTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findActorById() {
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findAllActorByMovieId() {
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findAllActor() {
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findActorsByPrefix() {
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void save() {
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void delete() {
     }
 }

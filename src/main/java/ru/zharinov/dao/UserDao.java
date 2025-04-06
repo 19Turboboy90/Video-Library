@@ -1,6 +1,5 @@
 package ru.zharinov.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.entity.Role;
 import ru.zharinov.entity.User;
@@ -13,11 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static lombok.AccessLevel.PRIVATE;
-
-@NoArgsConstructor(access = PRIVATE)
 public class UserDao implements Dao<Integer, User> {
-    private static final UserDao INSTANCE = new UserDao();
 
     private static final String FIND_ALL_USERS = """
             SELECT u.id, u.name, u.email, u.password, u.role
@@ -48,11 +43,6 @@ public class UserDao implements Dao<Integer, User> {
     private static final String UPDATE_USER = """
             UPDATE users  SET name = ?, email = ?, password = ?, role = ? WHERE id = ?;
             """;
-
-
-    public static UserDao getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public List<User> findAll() {

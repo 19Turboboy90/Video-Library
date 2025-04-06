@@ -5,9 +5,7 @@ import ru.zharinov.dto.actor.ActorDto;
 import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
 import ru.zharinov.entity.Actor;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.mapper.actor.ActorMapper;
-import ru.zharinov.mapper.actor.ActorWithMoviesMapper;
-import ru.zharinov.mapper.actor.CreateOrUpdateActorMapper;
+import ru.zharinov.mapper.ActorMapper;
 import ru.zharinov.validation.ActorValidator;
 import ru.zharinov.validation.EntityValidator;
 
@@ -15,17 +13,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
 public class ActorService {
     private final FactoryService factoryService;
-    private final ActorDao actorDao = ActorDao.getInstance();
+    private final ActorDao actorDao;
     private final ActorValidator actorValidator = ActorValidator.getInstance();
-    private final ActorWithMoviesMapper actorWithMoviesMapper = ActorWithMoviesMapper.getInstance();
-    private final CreateOrUpdateActorMapper createOrUpdateActorMapper = CreateOrUpdateActorMapper.getInstance();
-    private final ActorMapper actorMapper = ActorMapper.getInstance();
 
-    public ActorService(FactoryService factoryService) {
+    public ActorService(FactoryService factoryService, ActorDao actorDao) {
         this.factoryService = factoryService;
+        this.actorDao = actorDao;
     }
 
     public Optional<ActorDto> findActorById(Integer actorId) {
@@ -35,7 +30,7 @@ public class ActorService {
         var allMovieByActorId = factoryService.getMovieService().findAllMovieByActorId(actorId);
         actor.ifPresent(a -> a.setMovies(allMovieByActorId));
 
-        return actor.map(actorWithMoviesMapper::mapper);
+        return actor.map(ActorMapper::toActorDtoWithMovies);
     }
 
     public List<Actor> findAllActorByMovieId(Integer movieId) {
@@ -44,12 +39,12 @@ public class ActorService {
     }
 
     public List<ActorDto> findAllActor() {
-        return Optional.of(actorDao.findAll().stream().map(actorMapper::mapper).toList()).orElse(Collections.emptyList());
+        return Optional.of(actorDao.findAll().stream().map(ActorMapper::toActorDto).toList()).orElse(Collections.emptyList());
     }
 
     public List<ActorDto> findActorsByPrefix(String prefix) {
         var param = EntityValidator.validatorPrefix(prefix);
-        return actorDao.findActorsByPrefix(param).stream().map(actorMapper::mapper).toList();
+        return actorDao.findActorsByPrefix(param).stream().map(ActorMapper::toActorDto).toList();
     }
 
     public void save(CreateOrUpdateActorDto createActorDto) {
@@ -58,9 +53,9 @@ public class ActorService {
             throw new NotFoundException(valid.getErrors());
         }
         if (createActorDto.getId() == null || createActorDto.getId().isBlank()) {
-            actorDao.save(createOrUpdateActorMapper.mapper(createActorDto));
+            actorDao.save(ActorMapper.toActor(createActorDto));
         } else {
-            actorDao.update(createOrUpdateActorMapper.mapper(createActorDto));
+            actorDao.update(ActorMapper.toActor(createActorDto));
         }
     }
 

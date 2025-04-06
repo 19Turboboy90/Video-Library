@@ -1,21 +1,20 @@
 package ru.zharinov.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import ru.zharinov.dao.FeedbackDao;
 import ru.zharinov.dto.feedback.CreateFeedbackDto;
 import ru.zharinov.entity.Feedback;
-import ru.zharinov.mapper.feedback.CreateFeedbackMapper;
+import ru.zharinov.mapper.FeedbackMapper;
 import ru.zharinov.validation.EntityValidator;
 
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeedbackService {
-    private final FeedbackDao feedbackDao = FeedbackDao.getInstance();
-    private static final FeedbackService INSTANCE = new FeedbackService();
+    private final FeedbackDao feedbackDao;
     private final FactoryService factoryService = FactoryService.getInstance();
-    private final CreateFeedbackMapper createFeedbackMapper = CreateFeedbackMapper.getInstance();
+
+    public FeedbackService(FeedbackDao feedbackDao) {
+        this.feedbackDao = feedbackDao;
+    }
 
     public List<Feedback> findAllFeedbackByMovieId(Integer movieId) {
         return feedbackDao.findAllFeedbackByMovieId(movieId);
@@ -31,7 +30,7 @@ public class FeedbackService {
         EntityValidator.validateEntityExists(movieById, createFeedbackDto.getMovieId(), "movie");
         var userById = factoryService.getUserService().findById(Integer.parseInt(createFeedbackDto.getUserId()));
         EntityValidator.validateEntityExists(userById, createFeedbackDto.getUserId(), "user");
-        var feedback = createFeedbackMapper.mapper(createFeedbackDto);
+        var feedback = FeedbackMapper.toFeedback(createFeedbackDto);
 
         feedback.setMovie(movieById.orElseThrow());
         feedback.setUser(userById.orElseThrow());
@@ -41,9 +40,5 @@ public class FeedbackService {
     public void deleteFeedbackById(Integer id) {
         EntityValidator.validateId(id, "feedbackId");
         feedbackDao.delete(id);
-    }
-
-    public static FeedbackService getInstance() {
-        return INSTANCE;
     }
 }

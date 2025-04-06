@@ -6,9 +6,7 @@ import ru.zharinov.dto.director.DirectorDto;
 import ru.zharinov.dto.director.DirectorWithMoviesDto;
 import ru.zharinov.entity.Director;
 import ru.zharinov.exception.NotFoundException;
-import ru.zharinov.mapper.director.CreateOrUpdateDirectorMapper;
-import ru.zharinov.mapper.director.DirectorMapper;
-import ru.zharinov.mapper.director.DirectorWithMoviesMapper;
+import ru.zharinov.mapper.DirectorMapper;
 import ru.zharinov.validation.DirectorValidation;
 import ru.zharinov.validation.EntityValidator;
 
@@ -18,14 +16,12 @@ import java.util.Optional;
 
 public class DirectorService {
     private final FactoryService factoryService;
-    private final DirectorDao directorDao = DirectorDao.getInstance();
-    private final DirectorWithMoviesMapper directorWithMoviesMapper = DirectorWithMoviesMapper.getInstance();
-    private final CreateOrUpdateDirectorMapper createOrUpdateDirectorMapper = CreateOrUpdateDirectorMapper.getInstance();
-    private final DirectorMapper directorMapper = DirectorMapper.getInstance();
+    private final DirectorDao directorDao;
     private final DirectorValidation validation = DirectorValidation.getInstance();
 
-    public DirectorService(FactoryService factoryService) {
+    public DirectorService(FactoryService factoryService, DirectorDao directorDao) {
         this.factoryService = factoryService;
+        this.directorDao = directorDao;
     }
 
     public Optional<DirectorWithMoviesDto> findDirectorById(Integer directorId) {
@@ -35,7 +31,7 @@ public class DirectorService {
         var allMoviesByDirectorId = factoryService.getMovieService().findAllMoviesByDirectorId(directorId);
         directorByMovieId.ifPresent(d -> d.setMovies(allMoviesByDirectorId));
 
-        return directorByMovieId.map(directorWithMoviesMapper::mapper);
+        return directorByMovieId.map(DirectorMapper::toDirectorWithMoviesDto);
     }
 
     public Optional<Director> findDirectorByMovieId(Integer movieId) {
@@ -51,20 +47,20 @@ public class DirectorService {
             throw new NotFoundException(valid.getErrors());
         }
         if (directorDto.getId() == null || directorDto.getId().isBlank()) {
-            directorDao.save(createOrUpdateDirectorMapper.mapper(directorDto));
+            directorDao.save(DirectorMapper.toDirector(directorDto));
         } else {
-            directorDao.update(createOrUpdateDirectorMapper.mapper(directorDto));
+            directorDao.update(DirectorMapper.toDirector(directorDto));
         }
     }
 
     public List<DirectorDto> findAllDirectors() {
-        return Optional.of(directorDao.findAll().stream().map(directorMapper::mapper).toList())
+        return Optional.of(directorDao.findAll().stream().map(DirectorMapper::toDirectorDto).toList())
                 .orElse(Collections.emptyList());
     }
 
     public List<DirectorDto> findDirectorsByPrefix(String prefix) {
         var param = EntityValidator.validatorPrefix(prefix);
-        return directorDao.finDirectorsByPrefix(param).stream().map(directorMapper::mapper).toList();
+        return directorDao.finDirectorsByPrefix(param).stream().map(DirectorMapper::toDirectorDto).toList();
     }
 
     public void delete(Integer directorId) {

@@ -1,6 +1,5 @@
 package ru.zharinov.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.entity.Movie;
 import ru.zharinov.util.ConnectionManager;
@@ -14,11 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class MovieDao implements Dao<Integer, Movie> {
-    private static final MovieDao INSTANCE = new MovieDao();
 
     private static final String FIND_ALL_MOVIES = """
             SELECT m.id,
@@ -219,10 +215,6 @@ public class MovieDao implements Dao<Integer, Movie> {
                 .country(resultSet.getObject("country", String.class))
                 .genre(resultSet.getObject("genre", String.class))
                 .build();
-    }
-
-    public static MovieDao getInstance() {
-        return INSTANCE;
     }
 }
 

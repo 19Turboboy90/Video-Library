@@ -1,6 +1,5 @@
 package ru.zharinov.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.entity.Feedback;
 import ru.zharinov.entity.Movie;
@@ -15,11 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.sql.PreparedStatement.RETURN_GENERATED_KEYS;
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class FeedbackDao implements Dao<Integer, Feedback> {
-    private static final FeedbackDao INSTANCE = new FeedbackDao();
 
     private static final String FIND_ALL_FEEDBACK = """
             SELECT f.id, f.text, f.assessment, m.name AS movie_name, u.name AS user_name
@@ -129,9 +125,5 @@ public class FeedbackDao implements Dao<Integer, Feedback> {
                 .movie(movie)
                 .user(userName)
                 .build();
-    }
-
-    public static FeedbackDao getInstance() {
-        return INSTANCE;
     }
 }

@@ -1,6 +1,5 @@
 package ru.zharinov.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.zharinov.entity.Actor;
 import ru.zharinov.util.ConnectionManager;
@@ -11,11 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class ActorDao implements Dao<Integer, Actor> {
-    private static final ActorDao INSTANCE = new ActorDao();
 
     private static final String FIND_ALL_ACTORS = """
             SELECT a.id AS actor_id,
@@ -160,10 +156,6 @@ public class ActorDao implements Dao<Integer, Actor> {
                 .name(resultSet.getObject("actor_name", String.class))
                 .dateOfBirthday(resultSet.getObject("actor_date_of_birth", Date.class).toLocalDate())
                 .build();
-    }
-
-    public static ActorDao getInstance() {
-        return INSTANCE;
     }
 }
 
