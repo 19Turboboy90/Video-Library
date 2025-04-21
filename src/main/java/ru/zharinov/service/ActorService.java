@@ -1,5 +1,6 @@
 package ru.zharinov.service;
 
+import lombok.Setter;
 import ru.zharinov.dao.ActorDao;
 import ru.zharinov.dto.actor.ActorDto;
 import ru.zharinov.dto.actor.CreateOrUpdateActorDto;
@@ -14,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class ActorService {
-    private final FactoryService factoryService;
     private final ActorDao actorDao;
+    @Setter
+    private MovieService movieService;
     private final ActorValidator actorValidator = ActorValidator.getInstance();
 
-    public ActorService(FactoryService factoryService, ActorDao actorDao) {
-        this.factoryService = factoryService;
+    public ActorService(ActorDao actorDao) {
         this.actorDao = actorDao;
     }
 
@@ -27,7 +28,7 @@ public class ActorService {
         EntityValidator.validateId(actorId, "actor");
         var actor = actorDao.findById(actorId);
         EntityValidator.validateEntityExists(actor, actorId, "actor");
-        var allMovieByActorId = factoryService.getMovieService().findAllMovieByActorId(actorId);
+        var allMovieByActorId = movieService.findAllMovieByActorId(actorId);
         actor.ifPresent(a -> a.setMovies(allMovieByActorId));
 
         return actor.map(ActorMapper::toActorDtoWithMovies);
@@ -59,7 +60,7 @@ public class ActorService {
         }
     }
 
-    public void delete(Integer actorId) {
-        actorDao.delete(actorId);
+    public boolean delete(Integer actorId) {
+        return actorDao.delete(actorId);
     }
 }

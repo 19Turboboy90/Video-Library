@@ -1,5 +1,6 @@
 package ru.zharinov.service;
 
+import lombok.Setter;
 import ru.zharinov.dao.MovieDao;
 import ru.zharinov.dto.movie.CreateMovieDto;
 import ru.zharinov.dto.movie.MovieAllInfoDto;
@@ -17,11 +18,13 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 
 public class MovieService {
-    private final FactoryService factoryService;
     private final MovieDao movieDao;
+    @Setter
+    private DirectorService directorService;
+    @Setter
+    private ActorService actorService;
 
-    public MovieService(FactoryService factoryService, MovieDao movieDao) {
-        this.factoryService = factoryService;
+    public MovieService(MovieDao movieDao) {
         this.movieDao = movieDao;
     }
 
@@ -57,9 +60,9 @@ public class MovieService {
 
     public Optional<MovieAllInfoDto> findMovieById(Integer movieId) {
         EntityValidator.validateId(movieId, "movie");
-        var directorByMovieId = factoryService.getDirectorService().findDirectorByMovieId(movieId);
+        var directorByMovieId = directorService.findDirectorByMovieId(movieId);
         //Поиск актеров по id фильма
-        var allActorByMovieId = factoryService.getActorService().findAllActorByMovieId(movieId);
+        var allActorByMovieId = actorService.findAllActorByMovieId(movieId);
         var allFeedbackByMovieId =
                 FactoryService.getInstance().getFeedbackService().findAllFeedbackByMovieId(movieId);
         var movie = movieDao.findById(movieId);
@@ -73,7 +76,7 @@ public class MovieService {
 
     public void saveOrUpdateMovie(CreateMovieDto createMovieDto) throws SQLException {
         var directorById =
-                factoryService.getDirectorService().findById(Integer.parseInt(createMovieDto.getDirectorId()));
+                directorService.findById(Integer.parseInt(createMovieDto.getDirectorId()));
         EntityValidator.validateEntityExists(directorById, createMovieDto.getDirectorId(), "directorId");
         var movie = MovieMapper.toMovie(createMovieDto);
         movie.setDirector(directorById.orElseThrow());
@@ -88,7 +91,7 @@ public class MovieService {
         }
     }
 
-    public void deleteMovieById(Integer movieId) {
-        movieDao.delete(movieId);
+    public boolean deleteMovieById(Integer movieId) {
+        return movieDao.delete(movieId);
     }
 }

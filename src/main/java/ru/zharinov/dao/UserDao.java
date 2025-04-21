@@ -7,10 +7,11 @@ import ru.zharinov.util.ConnectionManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserDao implements Dao<Integer, User> {
 
@@ -99,7 +100,8 @@ public class UserDao implements Dao<Integer, User> {
     @SneakyThrows
     public User save(User entity) {
         try (var connection = ConnectionManager.getConnection();
-             var preparedStatement = connection.prepareStatement(SAVE_USER, Statement.RETURN_GENERATED_KEYS)) {
+             var preparedStatement =
+                     connection.prepareStatement(SAVE_USER, RETURN_GENERATED_KEYS)) {
             preparedStatement.setObject(1, entity.getName());
             preparedStatement.setObject(2, entity.getEmail());
             preparedStatement.setObject(3, entity.getPassword());

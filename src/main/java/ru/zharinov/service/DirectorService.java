@@ -1,5 +1,6 @@
 package ru.zharinov.service;
 
+import lombok.Setter;
 import ru.zharinov.dao.DirectorDao;
 import ru.zharinov.dto.director.CreateDirectorDto;
 import ru.zharinov.dto.director.DirectorDto;
@@ -15,12 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class DirectorService {
-    private final FactoryService factoryService;
     private final DirectorDao directorDao;
+    @Setter
+    private MovieService movieService;
     private final DirectorValidation validation = DirectorValidation.getInstance();
 
-    public DirectorService(FactoryService factoryService, DirectorDao directorDao) {
-        this.factoryService = factoryService;
+    public DirectorService(DirectorDao directorDao) {
         this.directorDao = directorDao;
     }
 
@@ -28,7 +29,7 @@ public class DirectorService {
         EntityValidator.validateId(directorId, "director");
         var directorByMovieId = directorDao.findById(directorId);
         EntityValidator.validateEntityExists(directorByMovieId, directorId, "director");
-        var allMoviesByDirectorId = factoryService.getMovieService().findAllMoviesByDirectorId(directorId);
+        var allMoviesByDirectorId = movieService.findAllMoviesByDirectorId(directorId);
         directorByMovieId.ifPresent(d -> d.setMovies(allMoviesByDirectorId));
 
         return directorByMovieId.map(DirectorMapper::toDirectorWithMoviesDto);
@@ -63,8 +64,8 @@ public class DirectorService {
         return directorDao.finDirectorsByPrefix(param).stream().map(DirectorMapper::toDirectorDto).toList();
     }
 
-    public void delete(Integer directorId) {
-        directorDao.delete(directorId);
+    public boolean delete(Integer directorId) {
+        return directorDao.delete(directorId);
     }
 
     public Optional<Director> findById(Integer directorId) {

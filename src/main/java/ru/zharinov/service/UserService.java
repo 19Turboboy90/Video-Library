@@ -1,5 +1,6 @@
 package ru.zharinov.service;
 
+import lombok.Setter;
 import lombok.SneakyThrows;
 import ru.zharinov.dao.UserDao;
 import ru.zharinov.dto.user.CreateUserDto;
@@ -17,6 +18,8 @@ import static java.util.Collections.emptyList;
 
 public class UserService {
     private final UserDao userDao;
+    @Setter
+    private FeedbackService feedbackService;
     private static final UserValidation userValidation = UserValidation.getInstance();
 
     public UserService(UserDao userDao) {
@@ -55,7 +58,7 @@ public class UserService {
         var user = userDao.findById(userId);
         EntityValidator.validateEntityExists(user, userId, "user");
         var allFeedbackByUserId =
-                FactoryService.getInstance().getFeedbackService().findAllFeedbackByUserId(userId);
+                feedbackService.findAllFeedbackByUserId(userId);
         user.ifPresent(u -> u.setFeedbacks(allFeedbackByUserId));
         return user.map(UserMapper::toUserDtoWithFeedbacks);
     }
@@ -71,7 +74,8 @@ public class UserService {
                 .orElse(emptyList());
     }
 
-    public void deleteUser(Integer userId) {
-        userDao.delete(userId);
+    public boolean deleteUser(Integer userId) {
+        EntityValidator.validateId(userId, "user");
+        return userDao.delete(userId);
     }
 }

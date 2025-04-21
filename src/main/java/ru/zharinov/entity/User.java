@@ -1,9 +1,6 @@
 package ru.zharinov.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -17,5 +14,6 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    @ToString.Exclude
     private List<Feedback> feedbacks;
 }

@@ -1,10 +1,12 @@
 package ru.zharinov.dto.feedback;
 
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.Setter;
 
-@Value
+@Data
 @Builder
+@Setter
 public class CreateFeedbackDto {
     String text;
     String assessment;

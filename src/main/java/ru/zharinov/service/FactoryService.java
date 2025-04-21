@@ -1,18 +1,10 @@
 package ru.zharinov.service;
 
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import ru.zharinov.dao.*;
 
-import static lombok.AccessLevel.PRIVATE;
-
-@NoArgsConstructor(access = PRIVATE)
 public class FactoryService {
     private static final FactoryService INSTANCE = new FactoryService();
-    private MovieService movieService;
-    private ActorService actorService;
-    private DirectorService directorService;
-    private UserService userService;
-    private FeedbackService feedbackService;
 
     private final ActorDao actorDao = new ActorDao();
     private final DirectorDao directorDao = new DirectorDao();
@@ -20,42 +12,32 @@ public class FactoryService {
     private final MovieDao movieDao = new MovieDao();
     private final UserDao userDao = new UserDao();
 
-    public MovieService getMovieService() {
-        if (movieService == null) {
-            movieService = new MovieService(this, movieDao);
-        }
-        return movieService;
-    }
+    @Getter
+    private final MovieService movieService = new MovieService(movieDao);
+    @Getter
+    private final ActorService actorService = new ActorService(actorDao);
+    @Getter
+    private final DirectorService directorService = new DirectorService(directorDao);
+    @Getter
+    private final FeedbackService feedbackService = new FeedbackService(feedbackDao);
+    @Getter
+    private final UserService userService = new UserService(userDao);
 
-    public ActorService getActorService() {
-        if (actorService == null) {
-            actorService = new ActorService(this, actorDao);
-        }
-        return actorService;
-    }
+    private FactoryService() {
+        movieService.setActorService(actorService);
+        movieService.setDirectorService(directorService);
 
-    public DirectorService getDirectorService() {
-        if (directorService == null) {
-            directorService = new DirectorService(this, directorDao);
-        }
-        return directorService;
-    }
+        actorService.setMovieService(movieService);
+        directorService.setMovieService(movieService);
 
-    public UserService getUserService() {
-        if (userService == null) {
-            userService = new UserService(userDao);
-        }
-        return userService;
-    }
+        feedbackService.setMovieService(movieService);
+        feedbackService.setUserService(userService);
 
-    public FeedbackService getFeedbackService() {
-        if (feedbackService == null) {
-            feedbackService = new FeedbackService(feedbackDao);
-        }
-        return feedbackService;
+        userService.setFeedbackService(feedbackService);
     }
 
     public static FactoryService getInstance() {
         return INSTANCE;
     }
 }
+

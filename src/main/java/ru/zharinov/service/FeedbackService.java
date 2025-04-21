@@ -1,5 +1,6 @@
 package ru.zharinov.service;
 
+import lombok.Setter;
 import ru.zharinov.dao.FeedbackDao;
 import ru.zharinov.dto.feedback.CreateFeedbackDto;
 import ru.zharinov.entity.Feedback;
@@ -7,10 +8,14 @@ import ru.zharinov.mapper.FeedbackMapper;
 import ru.zharinov.validation.EntityValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FeedbackService {
     private final FeedbackDao feedbackDao;
-    private final FactoryService factoryService = FactoryService.getInstance();
+    @Setter
+    private UserService userService;
+    @Setter
+    private MovieService movieService;
 
     public FeedbackService(FeedbackDao feedbackDao) {
         this.feedbackDao = feedbackDao;
@@ -24,21 +29,23 @@ public class FeedbackService {
         return feedbackDao.findAllFeedbackByUserId(userId);
     }
 
-    public void save(CreateFeedbackDto createFeedbackDto) {
+    public Feedback save(CreateFeedbackDto createFeedbackDto) {
         var movieById =
-                factoryService.getMovieService().findById(Integer.parseInt(createFeedbackDto.getMovieId()));
+                movieService.findById(Integer.parseInt(createFeedbackDto.getMovieId()));
+        System.out.println(Optional.ofNullable(movieService));
         EntityValidator.validateEntityExists(movieById, createFeedbackDto.getMovieId(), "movie");
-        var userById = factoryService.getUserService().findById(Integer.parseInt(createFeedbackDto.getUserId()));
+        var userById =
+                userService.findById(Integer.parseInt(createFeedbackDto.getUserId()));
         EntityValidator.validateEntityExists(userById, createFeedbackDto.getUserId(), "user");
         var feedback = FeedbackMapper.toFeedback(createFeedbackDto);
 
         feedback.setMovie(movieById.orElseThrow());
         feedback.setUser(userById.orElseThrow());
-        feedbackDao.save(feedback);
+        return feedbackDao.save(feedback);
     }
 
-    public void deleteFeedbackById(Integer id) {
+    public boolean deleteFeedbackById(Integer id) {
         EntityValidator.validateId(id, "feedbackId");
-        feedbackDao.delete(id);
+        return feedbackDao.delete(id);
     }
 }

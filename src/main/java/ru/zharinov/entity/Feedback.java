@@ -1,9 +1,6 @@
 package ru.zharinov.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +11,6 @@ public class Feedback {
     private String text;
     private Integer assessment;
     private Movie movie;
+    @ToString.Exclude
     private User user;
 }
